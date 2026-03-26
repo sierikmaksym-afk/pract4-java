@@ -1,38 +1,74 @@
+/**
+ * Клас, що описує працівника.
+ */
 public class Employee {
     private int id;
     private String name;
     private double salary;
 
+    /**
+     * Конструктор для створення об'єкта працівника.
+     */
     public Employee(int id, String name, double salary) {
-        this.id = id;
-        this.name = name;
-        this.salary = salary;
+        setId(id);
+        setName(name);
+        setSalary(salary);
     }
 
+    /**
+     * Повертає ідентифікатор працівника.
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Встановлює ідентифікатор працівника.
+     */
     public void setId(int id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("ID повинен бути більше 0.");
+        }
         this.id = id;
     }
 
+    /**
+     * Повертає ім'я працівника.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Встановлює ім'я працівника.
+     */
     public void setName(String name) {
-        this.name = name;
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Ім'я не може бути порожнім.");
+        }
+        this.name = name.trim();
     }
 
+    /**
+     * Повертає зарплату працівника.
+     */
     public double getSalary() {
         return salary;
     }
 
+    /**
+     * Встановлює зарплату працівника.
+     */
     public void setSalary(double salary) {
+        if (salary < 0) {
+            throw new IllegalArgumentException("Зарплата не може бути від'ємною.");
+        }
         this.salary = salary;
     }
 
+    /**
+     * Повертає рядкове представлення об'єкта.
+     */
     @Override
     public String toString() {
         return "Employee{" +
@@ -42,6 +78,9 @@ public class Employee {
                 '}';
     }
 
+    /**
+     * Порівнює поточний об'єкт з іншим об'єктом.
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
