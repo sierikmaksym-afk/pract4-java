@@ -12,9 +12,6 @@ import java.util.Scanner;
 public class Main {
     private static final String FILE_NAME = "input.txt";
 
-    /**
-     * Точка входу в програму.
-     */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         ArrayList<Employee> employees = new ArrayList<Employee>();
@@ -34,26 +31,28 @@ public class Main {
                     printAllEmployees(employees);
                     break;
                 case 3:
+                    searchObjectMenu(scanner, employees);
+                    break;
+                case 4:
                     saveToFile(employees);
                     System.out.println("Роботу програми завершено.");
                     running = false;
                     break;
                 default:
-                    System.out.println("Помилка: оберіть пункт від 1 до 3.");
+                    System.out.println("Помилка: оберіть пункт від 1 до 4.");
             }
         }
 
         scanner.close();
     }
 
-    /**
-     * Виводить головне меню.
-     */
+
     private static void printMainMenu() {
         System.out.println("\nГоловне меню:");
         System.out.println("1. Створити новий об’єкт");
         System.out.println("2. Вивести інформацію про всі об’єкти");
-        System.out.println("3. Завершити роботу програми");
+        System.out.println("3. Пошук об’єкта");
+        System.out.println("4. Завершити роботу програми");
     }
 
     /**
@@ -88,6 +87,100 @@ public class Main {
                 default:
                     System.out.println("Помилка: оберіть пункт від 0 до 5.");
             }
+        }
+    }
+
+    private static void printSearchMenu() {
+        System.out.println("\nПошук об'єкта:");
+        System.out.println("1. Пошук за id");
+        System.out.println("2. Пошук за ім'ям");
+        System.out.println("3. Пошук за типом об'єкта");
+        System.out.println("0. Повернутися до головного меню");
+    }
+
+    private static void searchObjectMenu(Scanner scanner, ArrayList<Employee> employees) {
+        boolean inSearchMenu = true;
+
+        while (inSearchMenu) {
+            printSearchMenu();
+            int choice = readMenuChoice(scanner);
+
+            switch (choice) {
+                case 1: {
+                    int id = readPositiveInt(scanner, "Введіть id для пошуку: ");
+                    ArrayList<Employee> results = searchById(employees, id);
+                    printSearchResults(results);
+                    break;
+                }
+                case 2: {
+                    String name = readNonEmptyString(scanner, "Введіть ім'я для пошуку: ");
+                    ArrayList<Employee> results = searchByName(employees, name);
+                    printSearchResults(results);
+                    break;
+                }
+                case 3: {
+                    String type = readNonEmptyString(scanner, "Введіть тип об'єкта для пошуку: ");
+                    ArrayList<Employee> results = searchByType(employees, type);
+                    printSearchResults(results);
+                    break;
+                }
+                case 0:
+                    inSearchMenu = false;
+                    break;
+                default:
+                    System.out.println("Помилка: оберіть пункт від 0 до 3.");
+            }
+        }
+    }
+
+    private static ArrayList<Employee> searchById(ArrayList<Employee> employees, int id) {
+        ArrayList<Employee> results = new ArrayList<Employee>();
+
+        for (Employee employee : employees) {
+            if (employee.getId() == id) {
+                results.add(employee);
+            }
+        }
+
+        return results;
+    }
+
+    private static ArrayList<Employee> searchByName(ArrayList<Employee> employees, String name) {
+        ArrayList<Employee> results = new ArrayList<Employee>();
+        String searchValue = name.trim().toLowerCase();
+
+        for (Employee employee : employees) {
+            if (employee.getName().toLowerCase().contains(searchValue)) {
+                results.add(employee);
+            }
+        }
+
+        return results;
+    }
+
+    private static ArrayList<Employee> searchByType(ArrayList<Employee> employees, String type) {
+        ArrayList<Employee> results = new ArrayList<Employee>();
+        String searchValue = type.trim().toLowerCase();
+
+        for (Employee employee : employees) {
+            String className = employee.getClass().getSimpleName().toLowerCase();
+            if (className.equals(searchValue)) {
+                results.add(employee);
+            }
+        }
+
+        return results;
+    }
+
+    private static void printSearchResults(ArrayList<Employee> results) {
+        if (results.isEmpty()) {
+            System.out.println("Жоден об'єкт не відповідає умовам пошуку.");
+            return;
+        }
+
+        System.out.println("\nРезультати пошуку:");
+        for (Employee employee : results) {
+            System.out.println(employee);
         }
     }
 
