@@ -115,17 +115,14 @@ public class Main {
                 return;
             }
 
-            Comparator<Employee> comparator = new Comparator<Employee>() {
-                @Override
-                public int compare(Employee o1, Employee o2) {
-                    int result = o1.getName().compareToIgnoreCase(o2.getName());
+            Comparator<Employee> comparator = (o1, o2) -> {
+                int result = o1.getName().compareToIgnoreCase(o2.getName());
 
-                    if (result != 0) {
-                        return result;
-                    }
-
-                    return Integer.compare(o1.getId(), o2.getId());
+                if (result != 0) {
+                    return result;
                 }
+
+                return Integer.compare(o1.getId(), o2.getId());
             };
 
             Collections.sort(employees, comparator);
@@ -151,23 +148,20 @@ public class Main {
                 return;
             }
 
-            Comparator<Employee> comparator = new Comparator<Employee>() {
-                @Override
-                public int compare(Employee o1, Employee o2) {
-                    int result = Double.compare(o1.getSalary(), o2.getSalary());
+            Comparator<Employee> comparator = (o1, o2) -> {
+                int result = Double.compare(o1.getSalary(), o2.getSalary());
 
-                    if (result != 0) {
-                        return result;
-                    }
-
-                    result = o1.getName().compareToIgnoreCase(o2.getName());
-
-                    if (result != 0) {
-                        return result;
-                    }
-
-                    return Integer.compare(o1.getId(), o2.getId());
+                if (result != 0) {
+                    return result;
                 }
+
+                result = o1.getName().compareToIgnoreCase(o2.getName());
+
+                if (result != 0) {
+                    return result;
+                }
+
+                return Integer.compare(o1.getId(), o2.getId());
             };
 
             Collections.sort(employees, comparator);
@@ -193,12 +187,7 @@ public class Main {
                 return;
             }
 
-            Comparator<Employee> comparator = new Comparator<Employee>() {
-                @Override
-                public int compare(Employee o1, Employee o2) {
-                    return Integer.compare(o1.getId(), o2.getId());
-                }
-            };
+            Comparator<Employee> comparator = (o1, o2) -> Integer.compare(o1.getId(), o2.getId());
 
             Collections.sort(employees, comparator);
 
