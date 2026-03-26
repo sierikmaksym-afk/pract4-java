@@ -1,9 +1,7 @@
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.Properties;
 
 /**
@@ -93,6 +91,68 @@ public class Repository {
             }
         }
     }
+
+    /**
+     * Повертає всі об'єкти з таблиці бази даних.
+     */
+    public ArrayList<Employee> findAllEmployees() throws SQLException {
+        String sql = "SELECT * FROM employees";
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        ArrayList<Employee> employees = new ArrayList<Employee>();
+
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                employees.add(mapRowToEmployee(resultSet));
+            }
+        } finally {
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+        }
+
+        return employees;
+    }
+
+    /**
+     * Створює об'єкт Employee або його підклас на основі запису з ResultSet.
+     */
+    private Employee mapRowToEmployee(ResultSet resultSet) throws SQLException {
+        String type = resultSet.getString("type");
+        int id = resultSet.getInt("id");
+        String name = resultSet.getString("name");
+        double salary = resultSet.getDouble("salary");
+
+        if ("ContractEmployee".equals(type)) {
+            int contractMonths = resultSet.getInt("contract_months");
+            return new ContractEmployee(id, name, salary, contractMonths);
+        }
+
+        if ("FullTimeEmployee".equals(type)) {
+            double bonus = resultSet.getDouble("bonus");
+            return new FullTimeEmployee(id, name, salary, bonus);
+        }
+
+        if ("RemoteEmployee".equals(type)) {
+            String workCountry = resultSet.getString("work_country");
+            return new RemoteEmployee(id, name, salary, workCountry);
+        }
+
+        if ("Manager".equals(type)) {
+            int teamSize = resultSet.getInt("team_size");
+            return new Manager(id, name, salary, teamSize);
+        }
+
+        throw new SQLException("Невідомий тип працівника у базі даних: " + type);
+    }
+
+
 
     /**
      * Закриває з'єднання з базою даних.
