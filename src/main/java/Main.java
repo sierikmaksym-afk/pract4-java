@@ -12,12 +12,13 @@ import java.util.Scanner;
 public class Main {
     private static final String FILE_NAME = "input.txt";
 
+    /**
+     * Точка входу в програму.
+     */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        ArrayList<Employee> employees = new ArrayList<Employee>();
+        Company company = loadCompanyFromFile();
         boolean running = true;
-
-        loadFromFile(employees);
 
         while (running) {
             printMainMenu();
@@ -25,16 +26,16 @@ public class Main {
 
             switch (choice) {
                 case 1:
-                    createObjectMenu(scanner, employees);
+                    createObjectMenu(scanner, company);
                     break;
                 case 2:
-                    printAllEmployees(employees);
+                    printAllEmployees(company);
                     break;
                 case 3:
-                    searchObjectMenu(scanner, employees);
+                    searchObjectMenu(scanner, company);
                     break;
                 case 4:
-                    saveToFile(employees);
+                    saveToFile(company);
                     System.out.println("Роботу програми завершено.");
                     running = false;
                     break;
@@ -58,7 +59,7 @@ public class Main {
     /**
      * Виводить підменю створення об'єктів.
      */
-    private static void createObjectMenu(Scanner scanner, ArrayList<Employee> employees) {
+    private static void createObjectMenu(Scanner scanner, Company company) {
         boolean inCreateMenu = true;
 
         while (inCreateMenu) {
@@ -67,19 +68,19 @@ public class Main {
 
             switch (choice) {
                 case 1:
-                    createEmployee(scanner, employees);
+                    createEmployee(scanner, company);
                     break;
                 case 2:
-                    createContractEmployee(scanner, employees);
+                    createContractEmployee(scanner, company);
                     break;
                 case 3:
-                    createFullTimeEmployee(scanner, employees);
+                    createFullTimeEmployee(scanner, company);
                     break;
                 case 4:
-                    createRemoteEmployee(scanner, employees);
+                    createRemoteEmployee(scanner, company);
                     break;
                 case 5:
-                    createManager(scanner, employees);
+                    createManager(scanner, company);
                     break;
                 case 0:
                     inCreateMenu = false;
@@ -99,9 +100,9 @@ public class Main {
     }
 
     /**
-     * Виводить підменю пошуку об'єктів.
+     * Виводить підменю пошуку та виконує пошук за вибраним критерієм.
      */
-    private static void searchObjectMenu(Scanner scanner, ArrayList<Employee> employees) {
+    private static void searchObjectMenu(Scanner scanner, Company company) {
         boolean inSearchMenu = true;
 
         while (inSearchMenu) {
@@ -111,19 +112,19 @@ public class Main {
             switch (choice) {
                 case 1: {
                     int id = readPositiveInt(scanner, "Введіть id для пошуку: ");
-                    ArrayList<Employee> results = searchById(employees, id);
+                    ArrayList<Employee> results = company.searchById(id);
                     printSearchResults(results);
                     break;
                 }
                 case 2: {
                     String name = readNonEmptyString(scanner, "Введіть ім'я для пошуку: ");
-                    ArrayList<Employee> results = searchByName(employees, name);
+                    ArrayList<Employee> results = company.searchByName(name);
                     printSearchResults(results);
                     break;
                 }
                 case 3: {
                     String type = readNonEmptyString(scanner, "Введіть тип об'єкта для пошуку: ");
-                    ArrayList<Employee> results = searchByType(employees, type);
+                    ArrayList<Employee> results = company.searchByType(type);
                     printSearchResults(results);
                     break;
                 }
@@ -134,6 +135,188 @@ public class Main {
                     System.out.println("Помилка: оберіть пункт від 0 до 3.");
             }
         }
+    }
+
+
+    /**
+     * Зчитує дані компанії та працівників із файлу.
+     */
+    private static Company loadCompanyFromFile() {
+        BufferedReader reader = null;
+        Company company = null;
+
+        try {
+            reader = new BufferedReader(new FileReader(FILE_NAME));
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+
+                if (line.isEmpty()) {
+                    continue;
+                }
+
+                try {
+                    if (line.startsWith("Company;")) {
+                        company = parseCompany(line);
+                    } else {
+                        if (company == null) {
+                            System.out.println("Спочатку у файлі має бути запис про компанію.");
+                            continue;
+                        }
+
+                        parseAndAddEmployee(line, company);
+                    }
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Пропущено некоректний запис у файлі: " + line);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Файл input.txt не знайдено або недоступний. Буде створено порожню компанію.");
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    System.out.println("Не вдалося закрити файл після зчитування.");
+                }
+            }
+        }
+
+        if (company == null) {
+            company = new Company("Default Company", "Default Address");
+        }
+
+        return company;
+    }
+
+    /**
+     * Записує дані компанії та всі об'єкти з колекції у файл.
+     */
+    private static void saveToFile(Company company) {
+        BufferedWriter writer = null;
+
+        try {
+            writer = new BufferedWriter(new FileWriter(FILE_NAME));
+            writer.write("Company;" + company.getName() + ";" + company.getAddress());
+            writer.newLine();
+
+            for (int i = 0; i < company.getEmployees().size(); i++) {
+                Employee employee = company.getEmployees().get(i);
+                int quantity = company.getQuantityByIndex(i);
+                writer.write(convertEmployeeToFileString(employee, quantity));
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Помилка під час запису у файл.");
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    System.out.println("Не вдалося закрити файл після запису.");
+                }
+            }
+        }
+    }
+
+    /**
+     * Створює працівника на основі рядка з файлу та додає його до компанії.
+     */
+    private static void parseAndAddEmployee(String line, Company company) {
+        String[] parts = line.split(";");
+
+        if (parts.length < 5) {
+            throw new IllegalArgumentException("Недостатньо даних у рядку.");
+        }
+
+        String type = parts[0].trim();
+        int quantity = Integer.parseInt(parts[1].trim());
+        int id = Integer.parseInt(parts[2].trim());
+        String name = parts[3].trim();
+        double salary = Double.parseDouble(parts[4].trim());
+
+        if ("Employee".equals(type)) {
+            if (parts.length != 5) {
+                throw new IllegalArgumentException("Некоректна кількість полів для Employee.");
+            }
+            company.addNewEmployee(new Employee(id, name, salary), quantity);
+            return;
+        }
+
+        if ("ContractEmployee".equals(type)) {
+            if (parts.length != 6) {
+                throw new IllegalArgumentException("Некоректна кількість полів для ContractEmployee.");
+            }
+            int contractMonths = Integer.parseInt(parts[5].trim());
+            company.addNewEmployee(new ContractEmployee(id, name, salary, contractMonths), quantity);
+            return;
+        }
+
+        if ("FullTimeEmployee".equals(type)) {
+            if (parts.length != 6) {
+                throw new IllegalArgumentException("Некоректна кількість полів для FullTimeEmployee.");
+            }
+            double bonus = Double.parseDouble(parts[5].trim());
+            company.addNewEmployee(new FullTimeEmployee(id, name, salary, bonus), quantity);
+            return;
+        }
+
+        if ("RemoteEmployee".equals(type)) {
+            if (parts.length != 6) {
+                throw new IllegalArgumentException("Некоректна кількість полів для RemoteEmployee.");
+            }
+            String workCountry = parts[5].trim();
+            company.addNewEmployee(new RemoteEmployee(id, name, salary, workCountry), quantity);
+            return;
+        }
+
+        if ("Manager".equals(type)) {
+            if (parts.length != 6) {
+                throw new IllegalArgumentException("Некоректна кількість полів для Manager.");
+            }
+            int teamSize = Integer.parseInt(parts[5].trim());
+            company.addNewEmployee(new Manager(id, name, salary, teamSize), quantity);
+            return;
+        }
+
+        throw new IllegalArgumentException("Невідомий тип об'єкта.");
+    }
+
+    /**
+     * Перетворює об'єкт працівника у рядок для запису у файл.
+     */
+    private static String convertEmployeeToFileString(Employee employee, int quantity) {
+        if (employee instanceof ContractEmployee) {
+            ContractEmployee contractEmployee = (ContractEmployee) employee;
+            return "ContractEmployee;" + quantity + ";" + contractEmployee.getId() + ";" +
+                    contractEmployee.getName() + ";" + contractEmployee.getSalary() + ";" +
+                    contractEmployee.getContractMonths();
+        }
+
+        if (employee instanceof FullTimeEmployee) {
+            FullTimeEmployee fullTimeEmployee = (FullTimeEmployee) employee;
+            return "FullTimeEmployee;" + quantity + ";" + fullTimeEmployee.getId() + ";" +
+                    fullTimeEmployee.getName() + ";" + fullTimeEmployee.getSalary() + ";" +
+                    fullTimeEmployee.getBonus();
+        }
+
+        if (employee instanceof RemoteEmployee) {
+            RemoteEmployee remoteEmployee = (RemoteEmployee) employee;
+            return "RemoteEmployee;" + quantity + ";" + remoteEmployee.getId() + ";" +
+                    remoteEmployee.getName() + ";" + remoteEmployee.getSalary() + ";" +
+                    remoteEmployee.getWorkCountry();
+        }
+
+        if (employee instanceof Manager) {
+            Manager manager = (Manager) employee;
+            return "Manager;" + quantity + ";" + manager.getId() + ";" +
+                    manager.getName() + ";" + manager.getSalary() + ";" +
+                    manager.getTeamSize();
+        }
+
+        return "Employee;" + quantity + ";" + employee.getId() + ";" +
+                employee.getName() + ";" + employee.getSalary();
     }
 
     /**
@@ -236,14 +419,15 @@ public class Main {
     /**
      * Створює об'єкт базового класу Employee.
      */
-    private static void createEmployee(Scanner scanner, ArrayList<Employee> employees) {
+    private static void createEmployee(Scanner scanner, Company company) {
         try {
             int id = readPositiveInt(scanner, "Введіть id: ");
             String name = readNonEmptyString(scanner, "Введіть ім'я: ");
             double salary = readNonNegativeDouble(scanner, "Введіть зарплату: ");
+            int quantity = readPositiveInt(scanner, "Введіть кількість: ");
 
             Employee employee = new Employee(id, name, salary);
-            employees.add(employee);
+            company.addNewEmployee(employee, quantity);
             System.out.println("Об'єкт Employee успішно додано.");
         } catch (IllegalArgumentException e) {
             System.out.println("Помилка створення об'єкта: " + e.getMessage());
@@ -253,15 +437,16 @@ public class Main {
     /**
      * Створює об'єкт класу ContractEmployee.
      */
-    private static void createContractEmployee(Scanner scanner, ArrayList<Employee> employees) {
+    private static void createContractEmployee(Scanner scanner, Company company) {
         try {
             int id = readPositiveInt(scanner, "Введіть id: ");
             String name = readNonEmptyString(scanner, "Введіть ім'я: ");
             double salary = readNonNegativeDouble(scanner, "Введіть зарплату: ");
             int contractMonths = readPositiveInt(scanner, "Введіть тривалість контракту в місяцях: ");
+            int quantity = readPositiveInt(scanner, "Введіть кількість: ");
 
             Employee employee = new ContractEmployee(id, name, salary, contractMonths);
-            employees.add(employee);
+            company.addNewEmployee(employee, quantity);
             System.out.println("Об'єкт ContractEmployee успішно додано.");
         } catch (IllegalArgumentException e) {
             System.out.println("Помилка створення об'єкта: " + e.getMessage());
@@ -271,15 +456,16 @@ public class Main {
     /**
      * Створює об'єкт класу FullTimeEmployee.
      */
-    private static void createFullTimeEmployee(Scanner scanner, ArrayList<Employee> employees) {
+    private static void createFullTimeEmployee(Scanner scanner, Company company) {
         try {
             int id = readPositiveInt(scanner, "Введіть id: ");
             String name = readNonEmptyString(scanner, "Введіть ім'я: ");
             double salary = readNonNegativeDouble(scanner, "Введіть зарплату: ");
             double bonus = readNonNegativeDouble(scanner, "Введіть бонус: ");
+            int quantity = readPositiveInt(scanner, "Введіть кількість: ");
 
             Employee employee = new FullTimeEmployee(id, name, salary, bonus);
-            employees.add(employee);
+            company.addNewEmployee(employee, quantity);
             System.out.println("Об'єкт FullTimeEmployee успішно додано.");
         } catch (IllegalArgumentException e) {
             System.out.println("Помилка створення об'єкта: " + e.getMessage());
@@ -289,15 +475,16 @@ public class Main {
     /**
      * Створює об'єкт класу RemoteEmployee.
      */
-    private static void createRemoteEmployee(Scanner scanner, ArrayList<Employee> employees) {
+    private static void createRemoteEmployee(Scanner scanner, Company company) {
         try {
             int id = readPositiveInt(scanner, "Введіть id: ");
             String name = readNonEmptyString(scanner, "Введіть ім'я: ");
             double salary = readNonNegativeDouble(scanner, "Введіть зарплату: ");
             String workCountry = readNonEmptyString(scanner, "Введіть країну дистанційної роботи: ");
+            int quantity = readPositiveInt(scanner, "Введіть кількість: ");
 
             Employee employee = new RemoteEmployee(id, name, salary, workCountry);
-            employees.add(employee);
+            company.addNewEmployee(employee, quantity);
             System.out.println("Об'єкт RemoteEmployee успішно додано.");
         } catch (IllegalArgumentException e) {
             System.out.println("Помилка створення об'єкта: " + e.getMessage());
@@ -307,15 +494,16 @@ public class Main {
     /**
      * Створює об'єкт класу Manager.
      */
-    private static void createManager(Scanner scanner, ArrayList<Employee> employees) {
+    private static void createManager(Scanner scanner, Company company) {
         try {
             int id = readPositiveInt(scanner, "Введіть id: ");
             String name = readNonEmptyString(scanner, "Введіть ім'я: ");
             double salary = readNonNegativeDouble(scanner, "Введіть зарплату: ");
             int teamSize = readPositiveInt(scanner, "Введіть кількість підлеглих: ");
+            int quantity = readPositiveInt(scanner, "Введіть кількість: ");
 
             Employee employee = new Manager(id, name, salary, teamSize);
-            employees.add(employee);
+            company.addNewEmployee(employee, quantity);
             System.out.println("Об'єкт Manager успішно додано.");
         } catch (IllegalArgumentException e) {
             System.out.println("Помилка створення об'єкта: " + e.getMessage());
@@ -325,15 +513,20 @@ public class Main {
     /**
      * Виводить інформацію про всі створені об'єкти.
      */
-    private static void printAllEmployees(ArrayList<Employee> employees) {
-        if (employees.isEmpty()) {
+    private static void printAllEmployees(Company company) {
+        if (company.getEmployees().isEmpty()) {
             System.out.println("Список об'єктів порожній.");
             return;
         }
 
-        System.out.println("\nІнформація про всі об'єкти:");
-        for (Employee employee : employees) {
-            System.out.println(employee);
+        System.out.println("\nКомпанія: " + company.getName());
+        System.out.println("Адреса: " + company.getAddress());
+        System.out.println("Інформація про всі об'єкти:");
+
+        for (int i = 0; i < company.getEmployees().size(); i++) {
+            Employee employee = company.getEmployees().get(i);
+            int quantity = company.getQuantityByIndex(i);
+            System.out.println(employee + ", quantity=" + quantity);
         }
     }
 
@@ -446,29 +639,19 @@ public class Main {
     }
 
     /**
-     * Записує всі об'єкти з колекції у файл.
+     * Створює об'єкт компанії на основі рядка з файлу.
      */
-    private static void saveToFile(ArrayList<Employee> employees) {
-        BufferedWriter writer = null;
+    private static Company parseCompany(String line) {
+        String[] parts = line.split(";");
 
-        try {
-            writer = new BufferedWriter(new FileWriter(FILE_NAME));
-
-            for (Employee employee : employees) {
-                writer.write(employee.toFileString());
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            System.out.println("Помилка під час запису у файл.");
-        } finally {
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (IOException e) {
-                    System.out.println("Не вдалося закрити файл після запису.");
-                }
-            }
+        if (parts.length != 3) {
+            throw new IllegalArgumentException("Некоректна кількість полів для Company.");
         }
+
+        String name = parts[1].trim();
+        String address = parts[2].trim();
+
+        return new Company(name, address);
     }
 
     /**
