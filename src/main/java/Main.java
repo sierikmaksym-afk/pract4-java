@@ -1,14 +1,8 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
+
 /**
  * Головний клас програми для роботи з працівниками через консольне меню.
  */
@@ -44,11 +38,17 @@ public class Main {
                     createObjectMenu(scanner, repository);
                     break;
                 case 2:
+                    printAllEmployees(repository);
+                    break;
+                case 3:
                     System.out.println("Роботу програми завершено.");
                     running = false;
                     break;
+                case 4:
+                    printSortedEmployees(repository);
+                    break;
                 default:
-                    System.out.println("Помилка: оберіть пункт від 1 до 2.");
+                    System.out.println("Помилка: оберіть пункт від 1 до 4.");
             }
         }
 
@@ -67,7 +67,9 @@ public class Main {
     private static void printMainMenu() {
         System.out.println("\nГоловне меню:");
         System.out.println("1. Додати працівника");
-        System.out.println("2. Завершити роботу");
+        System.out.println("2. Вивести інформацію про всі об'єкти");
+        System.out.println("3. Завершити роботу");
+        System.out.println("4. Вивести відсортовану інформацію про всі об'єкти");
     }
 
     /**
@@ -82,36 +84,24 @@ public class Main {
 
             switch (choice) {
                 case 1:
-                    createEmployee(scanner, repository);
-                    break;
-                case 2:
                     createContractEmployee(scanner, repository);
                     break;
-                case 3:
+                case 2:
                     createFullTimeEmployee(scanner, repository);
                     break;
-                case 4:
+                case 3:
                     createRemoteEmployee(scanner, repository);
                     break;
-                case 5:
+                case 4:
                     createManager(scanner, repository);
                     break;
                 case 0:
                     inCreateMenu = false;
                     break;
                 default:
-                    System.out.println("Помилка: оберіть пункт від 0 до 5.");
+                    System.out.println("Помилка: оберіть пункт від 0 до 4.");
             }
         }
-    }
-
-
-    private static void printSearchMenu() {
-        System.out.println("\nПошук об'єкта:");
-        System.out.println("1. Пошук за id");
-        System.out.println("2. Пошук за ім'ям");
-        System.out.println("3. Пошук за типом об'єкта");
-        System.out.println("0. Повернутися до головного меню");
     }
 
     /**
@@ -119,11 +109,10 @@ public class Main {
      */
     private static void printCreateMenu() {
         System.out.println("\nОберіть тип об'єкта для створення:");
-        System.out.println("1. Employee");
-        System.out.println("2. ContractEmployee");
-        System.out.println("3. FullTimeEmployee");
-        System.out.println("4. RemoteEmployee");
-        System.out.println("5. Manager");
+        System.out.println("1. ContractEmployee");
+        System.out.println("2. FullTimeEmployee");
+        System.out.println("3. RemoteEmployee");
+        System.out.println("4. Manager");
         System.out.println("0. Повернутися до головного меню");
     }
 
@@ -145,25 +134,6 @@ public class Main {
             } catch (NumberFormatException e) {
                 System.out.println("Помилка: введіть ціле число.");
             }
-        }
-    }
-
-    /**
-     * Створює об'єкт базового класу Employee.
-     */
-    private static void createEmployee(Scanner scanner, Repository repository) {
-        try {
-            int id = readPositiveInt(scanner, "Введіть id: ");
-            String name = readNonEmptyString(scanner, "Введіть ім'я: ");
-            double salary = readNonNegativeDouble(scanner, "Введіть зарплату: ");
-
-            Employee employee = new Employee(id, name, salary);
-            repository.insertEmployee(employee);
-            System.out.println("Об'єкт Employee успішно додано.");
-        } catch (IllegalArgumentException e) {
-            System.out.println("Помилка створення об'єкта: " + e.getMessage());
-        } catch (SQLException e) {
-            System.out.println("Помилка під час запису в базу даних: " + e.getMessage());
         }
     }
 
@@ -244,6 +214,50 @@ public class Main {
             System.out.println("Помилка створення об'єкта: " + e.getMessage());
         } catch (SQLException e) {
             System.out.println("Помилка під час запису в базу даних: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Виводить інформацію про всі об'єкти з бази даних.
+     */
+    private static void printAllEmployees(Repository repository) {
+        try {
+            ArrayList<Employee> employees = repository.findAllEmployees();
+
+            if (employees.isEmpty()) {
+                System.out.println("Список об'єктів порожній.");
+                return;
+            }
+
+            System.out.println("\nІнформація про всі об'єкти:");
+            for (Employee employee : employees) {
+                System.out.println(employee);
+            }
+        } catch (SQLException e) {
+            System.out.println("Помилка під час читання з бази даних: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Отримує всі об'єкти з бази даних, сортує їх за Comparable та виводить результат.
+     */
+    private static void printSortedEmployees(Repository repository) {
+        try {
+            ArrayList<Employee> employees = repository.findAllEmployees();
+
+            if (employees.isEmpty()) {
+                System.out.println("Список об'єктів порожній.");
+                return;
+            }
+
+            Collections.sort(employees);
+
+            System.out.println("\nВідсортована інформація про всі об'єкти:");
+            for (Employee employee : employees) {
+                System.out.println(employee);
+            }
+        } catch (SQLException e) {
+            System.out.println("Помилка під час читання з бази даних: " + e.getMessage());
         }
     }
 
