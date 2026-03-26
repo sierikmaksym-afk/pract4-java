@@ -11,7 +11,7 @@ public class Main {
      */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        ArrayList<Employee> employees = new ArrayList<>();
+        ArrayList<Employee> employees = new ArrayList<Employee>();
         boolean running = true;
 
         while (running) {
@@ -23,17 +23,20 @@ public class Main {
                     createEmployee(scanner, employees);
                     break;
                 case 2:
-                    printAllEmployees(employees);
+                    createContractEmployee(scanner, employees);
                     break;
                 case 3:
-                    printEmployeeCount();
+                    createFullTimeEmployee(scanner, employees);
                     break;
                 case 4:
+                    printAllEmployees(employees);
+                    break;
+                case 5:
                     System.out.println("Роботу програми завершено.");
                     running = false;
                     break;
                 default:
-                    System.out.println("Помилка: оберіть пункт від 1 до 4.");
+                    System.out.println("Помилка: оберіть пункт від 1 до 5.");
             }
         }
 
@@ -45,10 +48,11 @@ public class Main {
      */
     private static void printMenu() {
         System.out.println("\nМеню:");
-        System.out.println("1. Створити новий об’єкт");
-        System.out.println("2. Вивести інформацію про всі об’єкти");
-        System.out.println("3. Вивести кількість створених об'єктів");
-        System.out.println("4. Завершити роботу");
+        System.out.println("1. Створити Employee");
+        System.out.println("2. Створити ContractEmployee");
+        System.out.println("3. Створити FullTimeEmployee");
+        System.out.println("4. Вивести інформацію про всі об'єкти");
+        System.out.println("5. Завершити роботу");
     }
 
     /**
@@ -73,7 +77,7 @@ public class Main {
     }
 
     /**
-     * Створює нового працівника та додає його до списку.
+     * Створює об'єкт базового класу Employee.
      */
     private static void createEmployee(Scanner scanner, ArrayList<Employee> employees) {
         try {
@@ -83,34 +87,61 @@ public class Main {
 
             Employee employee = new Employee(id, name, salary);
             employees.add(employee);
-            System.out.println("Працівника успішно додано.");
+            System.out.println("Об'єкт Employee успішно додано.");
         } catch (IllegalArgumentException e) {
             System.out.println("Помилка створення об'єкта: " + e.getMessage());
         }
     }
 
     /**
-     * Виводить інформацію про всіх працівників.
+     * Створює об'єкт похідного класу ContractEmployee.
      */
-    private static void printAllEmployees(ArrayList<Employee> employees) {
-        if (employees.isEmpty()) {
-            System.out.println("Список працівників порожній.");
-            return;
-        }
+    private static void createContractEmployee(Scanner scanner, ArrayList<Employee> employees) {
+        try {
+            int id = readPositiveInt(scanner, "Введіть id: ");
+            String name = readNonEmptyString(scanner, "Введіть ім'я: ");
+            double salary = readNonNegativeDouble(scanner, "Введіть зарплату: ");
+            int contractMonths = readPositiveInt(scanner, "Введіть тривалість контракту в місяцях: ");
 
-        System.out.println("\nІнформація про всіх працівників:");
-        int i = 1;
-        for (Employee employee : employees) {
-            System.out.println(i + ". " + employee);
-            i++;
+            Employee employee = new ContractEmployee(id, name, salary, contractMonths);
+            employees.add(employee);
+            System.out.println("Об'єкт ContractEmployee успішно додано.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Помилка створення об'єкта: " + e.getMessage());
         }
     }
 
     /**
-     * Виводить кількість створених об'єктів Employee.
+     * Створює об'єкт похідного класу FullTimeEmployee.
      */
-    private static void printEmployeeCount() {
-        System.out.println("Кількість створених об'єктів Employee: " + Employee.getObjectCount());
+    private static void createFullTimeEmployee(Scanner scanner, ArrayList<Employee> employees) {
+        try {
+            int id = readPositiveInt(scanner, "Введіть id: ");
+            String name = readNonEmptyString(scanner, "Введіть ім'я: ");
+            double salary = readNonNegativeDouble(scanner, "Введіть зарплату: ");
+            double bonus = readNonNegativeDouble(scanner, "Введіть бонус: ");
+
+            Employee employee = new FullTimeEmployee(id, name, salary, bonus);
+            employees.add(employee);
+            System.out.println("Об'єкт FullTimeEmployee успішно додано.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Помилка створення об'єкта: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Виводить інформацію про всі створені об'єкти.
+     */
+    private static void printAllEmployees(ArrayList<Employee> employees) {
+        if (employees.isEmpty()) {
+            System.out.println("Список об'єктів порожній.");
+            return;
+        }
+
+        System.out.println("\nІнформація про всі об'єкти:");
+        for (Employee employee : employees) {
+            System.out.println(employee);
+        }
     }
 
     /**
@@ -172,7 +203,7 @@ public class Main {
             try {
                 double value = Double.parseDouble(input);
                 if (value < 0) {
-                    System.out.println("Помилка: зарплата не може бути від'ємною.");
+                    System.out.println("Помилка: значення не може бути від'ємним.");
                     continue;
                 }
                 return value;
