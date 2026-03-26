@@ -1,5 +1,5 @@
 ﻿/**
- * Похідний клас, що описує штатного працівника.
+ * Клас, що описує штатного працівника.
  */
 public class FullTimeEmployee extends Employee {
     private double bonus;
@@ -27,6 +27,14 @@ public class FullTimeEmployee extends Employee {
             throw new IllegalArgumentException("Бонус не може бути від'ємним.");
         }
         this.bonus = bonus;
+    }
+
+    /**
+     * Повертає рядок для запису об'єкта у файл.
+     */
+    @Override
+    public String toFileString() {
+        return "FullTimeEmployee;" + getId() + ";" + getName() + ";" + getSalary() + ";" + bonus;
     }
 
     /**

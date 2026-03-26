@@ -1,5 +1,5 @@
 ﻿/**
- * Похідний клас, що описує контрактного працівника.
+ * Клас, що описує контрактного працівника.
  */
 public class ContractEmployee extends Employee {
     private int contractMonths;
@@ -27,6 +27,14 @@ public class ContractEmployee extends Employee {
             throw new IllegalArgumentException("Тривалість контракту повинна бути більше 0.");
         }
         this.contractMonths = contractMonths;
+    }
+
+    /**
+     * Повертає рядок для запису об'єкта у файл.
+     */
+    @Override
+    public String toFileString() {
+        return "ContractEmployee;" + getId() + ";" + getName() + ";" + getSalary() + ";" + contractMonths;
     }
 
     /**

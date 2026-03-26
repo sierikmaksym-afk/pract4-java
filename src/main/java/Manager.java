@@ -30,6 +30,14 @@ public class Manager extends Employee {
     }
 
     /**
+     * Повертає рядок для запису об'єкта у файл.
+     */
+    @Override
+    public String toFileString() {
+        return "Manager;" + getId() + ";" + getName() + ";" + getSalary() + ";" + teamSize;
+    }
+
+    /**
      * Повертає рядкове представлення об'єкта.
      */
     @Override

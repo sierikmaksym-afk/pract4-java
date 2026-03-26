@@ -30,6 +30,14 @@ public class RemoteEmployee extends Employee {
     }
 
     /**
+     * Повертає рядок для запису об'єкта у файл.
+     */
+    @Override
+    public String toFileString() {
+        return "RemoteEmployee;" + getId() + ";" + getName() + ";" + getSalary() + ";" + workCountry;
+    }
+
+    /**
      * Повертає рядкове представлення об'єкта.
      */
     @Override

@@ -80,6 +80,13 @@ public class Employee {
     }
 
     /**
+     * Повертає рядок для запису об'єкта у файл.
+     */
+    public String toFileString() {
+        return "Employee;" + id + ";" + name + ";" + salary;
+    }
+
+    /**
      * Повертає рядкове представлення об'єкта.
      */
     @Override
