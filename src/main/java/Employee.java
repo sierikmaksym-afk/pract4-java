@@ -1,11 +1,10 @@
 /**
- * Клас, що описує працівника.
+ * Базовий клас, що описує працівника компанії.
  */
 public class Employee {
     private int id;
     private String name;
     private double salary;
-    private static int objectCount = 0;
 
     /**
      * Конструктор для створення об'єкта працівника.
@@ -14,7 +13,6 @@ public class Employee {
         setId(id);
         setName(name);
         setSalary(salary);
-        objectCount++;
     }
 
     /**
@@ -28,14 +26,6 @@ public class Employee {
         this.id = other.id;
         this.name = other.name;
         this.salary = other.salary;
-        objectCount++;
-    }
-
-    /**
-     * Повертає кількість створених об'єктів.
-     */
-    public static int getObjectCount() {
-        return objectCount;
     }
 
     /**
