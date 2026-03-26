@@ -1,6 +1,7 @@
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Scanner;
 
 /**
@@ -45,7 +46,7 @@ public class Main {
                     running = false;
                     break;
                 case 4:
-                    printSortedEmployees(repository);
+                    sortEmployeesMenu(scanner, repository);
                     break;
                 default:
                     System.out.println("Помилка: оберіть пункт від 1 до 4.");
@@ -59,6 +60,155 @@ public class Main {
         }
 
         scanner.close();
+    }
+
+    /**
+     * Виводить підменю сортування та виконує сортування за вибраним критерієм.
+     */
+    private static void sortEmployeesMenu(Scanner scanner, Repository repository) {
+        boolean inSortMenu = true;
+
+        while (inSortMenu) {
+            printSortMenu();
+            int choice = readMenuChoice(scanner);
+
+            switch (choice) {
+                case 1:
+                    sortByName(repository);
+                    break;
+                case 2:
+                    sortBySalary(repository);
+                    break;
+                case 3:
+                    sortById(repository);
+                    break;
+                case 0:
+                    inSortMenu = false;
+                    break;
+                default:
+                    System.out.println("Помилка: оберіть пункт від 0 до 3.");
+            }
+        }
+    }
+
+    /**
+     * Виводить підменю вибору критерію сортування.
+     */
+    private static void printSortMenu() {
+        System.out.println("\nОберіть критерій сортування:");
+        System.out.println("1. Сортувати за ім'ям");
+        System.out.println("2. Сортувати за зарплатою");
+        System.out.println("3. Сортувати за id");
+        System.out.println("0. Повернутися в головне меню");
+    }
+
+
+    /**
+     * Отримує всі об'єкти з бази даних, сортує їх за ім'ям та виводить результат.
+     */
+    private static void sortByName(Repository repository) {
+        try {
+            ArrayList<Employee> employees = repository.findAllEmployees();
+
+            if (employees.isEmpty()) {
+                System.out.println("Список об'єктів порожній.");
+                return;
+            }
+
+            Comparator<Employee> comparator = new Comparator<Employee>() {
+                @Override
+                public int compare(Employee o1, Employee o2) {
+                    int result = o1.getName().compareToIgnoreCase(o2.getName());
+
+                    if (result != 0) {
+                        return result;
+                    }
+
+                    return Integer.compare(o1.getId(), o2.getId());
+                }
+            };
+
+            Collections.sort(employees, comparator);
+
+            System.out.println("\nВідсортована інформація за ім'ям:");
+            for (Employee employee : employees) {
+                System.out.println(employee);
+            }
+        } catch (SQLException e) {
+            System.out.println("Помилка під час читання з бази даних: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Отримує всі об'єкти з бази даних, сортує їх за зарплатою та виводить результат.
+     */
+    private static void sortBySalary(Repository repository) {
+        try {
+            ArrayList<Employee> employees = repository.findAllEmployees();
+
+            if (employees.isEmpty()) {
+                System.out.println("Список об'єктів порожній.");
+                return;
+            }
+
+            Comparator<Employee> comparator = new Comparator<Employee>() {
+                @Override
+                public int compare(Employee o1, Employee o2) {
+                    int result = Double.compare(o1.getSalary(), o2.getSalary());
+
+                    if (result != 0) {
+                        return result;
+                    }
+
+                    result = o1.getName().compareToIgnoreCase(o2.getName());
+
+                    if (result != 0) {
+                        return result;
+                    }
+
+                    return Integer.compare(o1.getId(), o2.getId());
+                }
+            };
+
+            Collections.sort(employees, comparator);
+
+            System.out.println("\nВідсортована інформація за зарплатою:");
+            for (Employee employee : employees) {
+                System.out.println(employee);
+            }
+        } catch (SQLException e) {
+            System.out.println("Помилка під час читання з бази даних: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Отримує всі об'єкти з бази даних, сортує їх за id та виводить результат.
+     */
+    private static void sortById(Repository repository) {
+        try {
+            ArrayList<Employee> employees = repository.findAllEmployees();
+
+            if (employees.isEmpty()) {
+                System.out.println("Список об'єктів порожній.");
+                return;
+            }
+
+            Comparator<Employee> comparator = new Comparator<Employee>() {
+                @Override
+                public int compare(Employee o1, Employee o2) {
+                    return Integer.compare(o1.getId(), o2.getId());
+                }
+            };
+
+            Collections.sort(employees, comparator);
+
+            System.out.println("\nВідсортована інформація за id:");
+            for (Employee employee : employees) {
+                System.out.println(employee);
+            }
+        } catch (SQLException e) {
+            System.out.println("Помилка під час читання з бази даних: " + e.getMessage());
+        }
     }
 
     /**
