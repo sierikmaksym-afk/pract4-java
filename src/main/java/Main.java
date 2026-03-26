@@ -26,11 +26,14 @@ public class Main {
                     printAllEmployees(employees);
                     break;
                 case 3:
+                    printEmployeeCount();
+                    break;
+                case 4:
                     System.out.println("Роботу програми завершено.");
                     running = false;
                     break;
                 default:
-                    System.out.println("Помилка: оберіть пункт від 1 до 3.");
+                    System.out.println("Помилка: оберіть пункт від 1 до 4.");
             }
         }
 
@@ -44,7 +47,8 @@ public class Main {
         System.out.println("\nМеню:");
         System.out.println("1. Створити новий об’єкт");
         System.out.println("2. Вивести інформацію про всі об’єкти");
-        System.out.println("3. Завершити роботу");
+        System.out.println("3. Вивести кількість створених об'єктів");
+        System.out.println("4. Завершити роботу");
     }
 
     /**
@@ -95,9 +99,18 @@ public class Main {
         }
 
         System.out.println("\nІнформація про всіх працівників:");
+        int i = 1;
         for (Employee employee : employees) {
-            System.out.println(employee);
+            System.out.println(i + ". " + employee);
+            i++;
         }
+    }
+
+    /**
+     * Виводить кількість створених об'єктів Employee.
+     */
+    private static void printEmployeeCount() {
+        System.out.println("Кількість створених об'єктів Employee: " + Employee.getObjectCount());
     }
 
     /**
