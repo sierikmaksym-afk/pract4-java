@@ -5,6 +5,7 @@ public class Employee {
     private int id;
     private String name;
     private double salary;
+    private static int objectCount = 0;
 
     /**
      * Конструктор для створення об'єкта працівника.
@@ -13,6 +14,28 @@ public class Employee {
         setId(id);
         setName(name);
         setSalary(salary);
+        objectCount++;
+    }
+
+    /**
+     * Конструктор копіювання.
+     */
+    public Employee(Employee other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Об'єкт для копіювання не може бути null.");
+        }
+
+        this.id = other.id;
+        this.name = other.name;
+        this.salary = other.salary;
+        objectCount++;
+    }
+
+    /**
+     * Повертає кількість створених об'єктів.
+     */
+    public static int getObjectCount() {
+        return objectCount;
     }
 
     /**
