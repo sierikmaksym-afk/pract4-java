@@ -98,6 +98,9 @@ public class Main {
         System.out.println("0. Повернутися до головного меню");
     }
 
+    /**
+     * Виводить підменю пошуку об'єктів.
+     */
     private static void searchObjectMenu(Scanner scanner, ArrayList<Employee> employees) {
         boolean inSearchMenu = true;
 
@@ -133,6 +136,9 @@ public class Main {
         }
     }
 
+    /**
+     * Пошук за ідентифікатором.
+     */
     private static ArrayList<Employee> searchById(ArrayList<Employee> employees, int id) {
         ArrayList<Employee> results = new ArrayList<Employee>();
 
@@ -145,6 +151,9 @@ public class Main {
         return results;
     }
 
+    /**
+     * Пошук за ім'ям.
+     */
     private static ArrayList<Employee> searchByName(ArrayList<Employee> employees, String name) {
         ArrayList<Employee> results = new ArrayList<Employee>();
         String searchValue = name.trim().toLowerCase();
@@ -158,6 +167,9 @@ public class Main {
         return results;
     }
 
+    /**
+     * Пошук за типом.
+     */
     private static ArrayList<Employee> searchByType(ArrayList<Employee> employees, String type) {
         ArrayList<Employee> results = new ArrayList<Employee>();
         String searchValue = type.trim().toLowerCase();
@@ -172,6 +184,9 @@ public class Main {
         return results;
     }
 
+    /**
+     * Виводить результат пошуку.
+     */
     private static void printSearchResults(ArrayList<Employee> results) {
         if (results.isEmpty()) {
             System.out.println("Жоден об'єкт не відповідає умовам пошуку.");
