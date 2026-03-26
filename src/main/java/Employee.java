@@ -32,4 +32,30 @@ public class Employee {
     public void setSalary(double salary) {
         this.salary = salary;
     }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", salary=" + salary +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Employee employee = (Employee) obj;
+
+        return id == employee.id &&
+                Double.compare(salary, employee.salary) == 0 &&
+                name.equals(employee.name);
+    }
 }
