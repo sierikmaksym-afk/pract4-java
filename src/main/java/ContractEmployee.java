@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Клас, що описує контрактного працівника.
  */
 public class ContractEmployee extends Employee {

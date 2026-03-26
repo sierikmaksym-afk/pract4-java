@@ -1,3 +1,8 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -5,6 +10,7 @@ import java.util.Scanner;
  * Головний клас програми для роботи з працівниками через консольне меню.
  */
 public class Main {
+    private static final String FILE_NAME = "input.txt";
 
     /**
      * Точка входу в програму.
@@ -13,6 +19,8 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         ArrayList<Employee> employees = new ArrayList<Employee>();
         boolean running = true;
+
+        loadFromFile(employees);
 
         while (running) {
             printMainMenu();
@@ -26,6 +34,7 @@ public class Main {
                     printAllEmployees(employees);
                     break;
                 case 3:
+                    saveToFile(employees);
                     System.out.println("Роботу програми завершено.");
                     running = false;
                     break;
@@ -287,5 +296,127 @@ public class Main {
                 System.out.println("Помилка: введіть коректне число.");
             }
         }
+    }
+
+    /**
+     * Зчитує об'єкти з файлу та додає їх до колекції.
+     */
+    private static void loadFromFile(ArrayList<Employee> employees) {
+        BufferedReader reader = null;
+
+        try {
+            reader = new BufferedReader(new FileReader(FILE_NAME));
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+
+                if (line.isEmpty()) {
+                    continue;
+                }
+
+                try {
+                    Employee employee = parseEmployee(line);
+                    if (employee != null) {
+                        employees.add(employee);
+                    }
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Пропущено некоректний запис у файлі: " + line);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Файл input.txt не знайдено або недоступний. Програму буде запущено з порожнім списком.");
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    System.out.println("Не вдалося закрити файл після зчитування.");
+                }
+            }
+        }
+    }
+
+    /**
+     * Записує всі об'єкти з колекції у файл.
+     */
+    private static void saveToFile(ArrayList<Employee> employees) {
+        BufferedWriter writer = null;
+
+        try {
+            writer = new BufferedWriter(new FileWriter(FILE_NAME));
+
+            for (Employee employee : employees) {
+                writer.write(employee.toFileString());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Помилка під час запису у файл.");
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    System.out.println("Не вдалося закрити файл після запису.");
+                }
+            }
+        }
+    }
+
+    /**
+     * Створює об'єкт потрібного типу на основі рядка з файлу.
+     */
+    private static Employee parseEmployee(String line) {
+        String[] parts = line.split(";");
+
+        if (parts.length < 4) {
+            throw new IllegalArgumentException("Недостатньо даних у рядку.");
+        }
+
+        String type = parts[0].trim();
+        int id = Integer.parseInt(parts[1].trim());
+        String name = parts[2].trim();
+        double salary = Double.parseDouble(parts[3].trim());
+
+        if ("Employee".equals(type)) {
+            if (parts.length != 4) {
+                throw new IllegalArgumentException("Некоректна кількість полів для Employee.");
+            }
+            return new Employee(id, name, salary);
+        }
+
+        if ("ContractEmployee".equals(type)) {
+            if (parts.length != 5) {
+                throw new IllegalArgumentException("Некоректна кількість полів для ContractEmployee.");
+            }
+            int contractMonths = Integer.parseInt(parts[4].trim());
+            return new ContractEmployee(id, name, salary, contractMonths);
+        }
+
+        if ("FullTimeEmployee".equals(type)) {
+            if (parts.length != 5) {
+                throw new IllegalArgumentException("Некоректна кількість полів для FullTimeEmployee.");
+            }
+            double bonus = Double.parseDouble(parts[4].trim());
+            return new FullTimeEmployee(id, name, salary, bonus);
+        }
+
+        if ("RemoteEmployee".equals(type)) {
+            if (parts.length != 5) {
+                throw new IllegalArgumentException("Некоректна кількість полів для RemoteEmployee.");
+            }
+            String workCountry = parts[4].trim();
+            return new RemoteEmployee(id, name, salary, workCountry);
+        }
+
+        if ("Manager".equals(type)) {
+            if (parts.length != 5) {
+                throw new IllegalArgumentException("Некоректна кількість полів для Manager.");
+            }
+            int teamSize = Integer.parseInt(parts[4].trim());
+            return new Manager(id, name, salary, teamSize);
+        }
+
+        throw new IllegalArgumentException("Невідомий тип об'єкта.");
     }
 }

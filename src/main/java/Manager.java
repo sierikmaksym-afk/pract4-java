@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Клас, що описує менеджера.
  */
 public class Manager extends Employee {

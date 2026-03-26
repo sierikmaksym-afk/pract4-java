@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Клас, що описує штатного працівника.
  */
 public class FullTimeEmployee extends Employee {

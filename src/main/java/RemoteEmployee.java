@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Клас, що описує віддаленого працівника.
  */
 public class RemoteEmployee extends Employee {
