@@ -1,7 +1,7 @@
 /**
  * Базовий клас, що описує працівника компанії.
  */
-public class Employee {
+public abstract class Employee implements Comparable<Employee> {
     private int id;
     private String name;
     private double salary;
@@ -116,5 +116,23 @@ public class Employee {
         return id == employee.id &&
                 Double.compare(salary, employee.salary) == 0 &&
                 name.equals(employee.name);
+    }
+
+    /**
+     * Порівнює поточний об'єкт з іншим об'єктом за ім'ям.
+     */
+    @Override
+    public int compareTo(Employee other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Об'єкт для порівняння не може бути null.");
+        }
+
+        int nameComparison = this.name.compareToIgnoreCase(other.name);
+
+        if (nameComparison != 0) {
+            return nameComparison;
+        }
+
+        return Integer.compare(this.id, other.id);
     }
 }
