@@ -125,6 +125,24 @@ public class Company {
         return true;
     }
 
+    /**
+     * Видаляє існуючого працівника з колекції.
+     */
+    public boolean delete(Employee existingObject) {
+        if (existingObject == null) {
+            return false;
+        }
+
+        int index = findEmployeeIndex(existingObject);
+
+        if (index == -1) {
+            return false;
+        }
+
+        employees.remove(index);
+        return true;
+    }
+
 
     /**
      * Повертає всі об'єкти, тип яких відповідає заданому значенню.

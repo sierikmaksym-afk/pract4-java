@@ -32,17 +32,20 @@ public class Main {
                     updateEmployeeMenu(scanner, company);
                     break;
                 case 4:
-                    searchObjectMenu(scanner, company);
+                    deleteEmployeeMenu(scanner, company);
                     break;
                 case 5:
-                    sortEmployeesMenu(scanner, company);
+                    searchObjectMenu(scanner, company);
                     break;
                 case 6:
+                    sortEmployeesMenu(scanner, company);
+                    break;
+                case 7:
                     System.out.println("Роботу програми завершено.");
                     running = false;
                     break;
                 default:
-                    System.out.println("Помилка: оберіть пункт від 1 до 6.");
+                    System.out.println("Помилка: оберіть пункт від 1 до 7.");
             }
         }
 
@@ -57,9 +60,38 @@ public class Main {
         System.out.println("1. Створити новий об’єкт");
         System.out.println("2. Вивести інформацію про всі об’єкти");
         System.out.println("3. Модифікувати об’єкт");
-        System.out.println("4. Пошук об’єкта");
-        System.out.println("5. Вивести відсортовану інформацію про всі об'єкти");
-        System.out.println("6. Завершити роботу програми");
+        System.out.println("4. Видалити об’єкт");
+        System.out.println("5. Пошук об’єкта");
+        System.out.println("6. Вивести відсортовану інформацію про всі об'єкти");
+        System.out.println("7. Завершити роботу програми");
+    }
+
+    /**
+     * Виводить меню видалення працівника.
+     */
+    private static void deleteEmployeeMenu(Scanner scanner, Company company) {
+        if (company.getEmployees().isEmpty()) {
+            System.out.println("Список об'єктів порожній.");
+            return;
+        }
+
+        printAllEmployees(company);
+
+        UUID uuid = readUuid(scanner, "Введіть UUID об'єкта, який потрібно видалити: ");
+        ArrayList<Employee> found = company.searchByUuid(uuid);
+
+        if (found.isEmpty()) {
+            System.out.println("Об'єкт не знайдено.");
+            return;
+        }
+
+        boolean deleted = company.delete(found.get(0));
+
+        if (deleted) {
+            System.out.println("Об'єкт успішно видалено.");
+        } else {
+            System.out.println("Не вдалося видалити об'єкт.");
+        }
     }
 
     /**
