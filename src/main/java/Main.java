@@ -5,7 +5,7 @@ import java.util.Scanner;
 import java.util.UUID;
 
 /**
- * Головний клас програми для роботи з працівниками через консольне меню.
+ * Головний клас програми для роботи з робітниками через консольне меню.
  */
 public class Main {
 
@@ -23,7 +23,7 @@ public class Main {
 
             switch (choice) {
                 case 1:
-                    createObjectMenu(scanner, company);
+                    createEmployeeMenu(scanner, company);
                     break;
                 case 2:
                     printAllEmployees(company);
@@ -35,7 +35,7 @@ public class Main {
                     deleteEmployeeMenu(scanner, company);
                     break;
                 case 5:
-                    searchObjectMenu(scanner, company);
+                    searchEmployeeMenu(scanner, company);
                     break;
                 case 6:
                     sortEmployeesMenu(scanner, company);
@@ -67,30 +67,152 @@ public class Main {
     }
 
     /**
-     * Виводить меню видалення робітника.
+     * Виводить підменю створення робітників.
      */
-    private static void deleteEmployeeMenu(Scanner scanner, Company company) {
+    private static void createEmployeeMenu(Scanner scanner, Company company) {
+        boolean inCreateMenu = true;
+
+        while (inCreateMenu) {
+            printCreateMenu();
+            int choice = readMenuChoice(scanner);
+
+            switch (choice) {
+                case 1:
+                    createEmployee(scanner, company);
+                    break;
+                case 2:
+                    createContractEmployee(scanner, company);
+                    break;
+                case 3:
+                    createFullTimeEmployee(scanner, company);
+                    break;
+                case 4:
+                    createRemoteEmployee(scanner, company);
+                    break;
+                case 5:
+                    createManager(scanner, company);
+                    break;
+                case 0:
+                    inCreateMenu = false;
+                    break;
+                default:
+                    System.out.println("Помилка: оберіть пункт від 0 до 5.");
+            }
+        }
+    }
+
+    /**
+     * Виводить меню вибору типу робітника.
+     */
+    private static void printCreateMenu() {
+        System.out.println("\nОберіть тип робітника для створення:");
+        System.out.println("1. Employee");
+        System.out.println("2. ContractEmployee");
+        System.out.println("3. FullTimeEmployee");
+        System.out.println("4. RemoteEmployee");
+        System.out.println("5. Manager");
+        System.out.println("0. Повернутися до головного меню");
+    }
+
+    /**
+     * Створює робітника базового класу Employee.
+     */
+    private static void createEmployee(Scanner scanner, Company company) {
+        try {
+            String name = readNonEmptyString(scanner, "Введіть ім'я: ");
+            double salary = readNonNegativeDouble(scanner, "Введіть зарплату: ");
+
+            Employee employee = new Employee(name, salary);
+            company.addNewEmployee(employee);
+            System.out.println("Робітника Employee успішно додано.");
+        } catch (InvalidFieldValueException e) {
+            System.out.println("Помилка створення робітника: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Створює робітника класу ContractEmployee.
+     */
+    private static void createContractEmployee(Scanner scanner, Company company) {
+        try {
+            String name = readNonEmptyString(scanner, "Введіть ім'я: ");
+            double salary = readNonNegativeDouble(scanner, "Введіть зарплату: ");
+            int contractMonths = readPositiveInt(scanner, "Введіть тривалість контракту в місяцях: ");
+
+            Employee employee = new ContractEmployee(name, salary, contractMonths);
+            company.addNewEmployee(employee);
+            System.out.println("Робітника ContractEmployee успішно додано.");
+        } catch (InvalidFieldValueException e) {
+            System.out.println("Помилка створення робітника: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Створює робітника класу FullTimeEmployee.
+     */
+    private static void createFullTimeEmployee(Scanner scanner, Company company) {
+        try {
+            String name = readNonEmptyString(scanner, "Введіть ім'я: ");
+            double salary = readNonNegativeDouble(scanner, "Введіть зарплату: ");
+            double bonus = readNonNegativeDouble(scanner, "Введіть бонус: ");
+
+            Employee employee = new FullTimeEmployee(name, salary, bonus);
+            company.addNewEmployee(employee);
+            System.out.println("Робітника FullTimeEmployee успішно додано.");
+        } catch (InvalidFieldValueException e) {
+            System.out.println("Помилка створення робітника: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Створює робітника класу RemoteEmployee.
+     */
+    private static void createRemoteEmployee(Scanner scanner, Company company) {
+        try {
+            String name = readNonEmptyString(scanner, "Введіть ім'я: ");
+            double salary = readNonNegativeDouble(scanner, "Введіть зарплату: ");
+            String workCountry = readNonEmptyString(scanner, "Введіть країну дистанційної роботи: ");
+
+            Employee employee = new RemoteEmployee(name, salary, workCountry);
+            company.addNewEmployee(employee);
+            System.out.println("Робітника RemoteEmployee успішно додано.");
+        } catch (InvalidFieldValueException e) {
+            System.out.println("Помилка створення робітника: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Створює робітника класу Manager.
+     */
+    private static void createManager(Scanner scanner, Company company) {
+        try {
+            String name = readNonEmptyString(scanner, "Введіть ім'я: ");
+            double salary = readNonNegativeDouble(scanner, "Введіть зарплату: ");
+            int teamSize = readPositiveInt(scanner, "Введіть кількість підлеглих: ");
+
+            Employee employee = new Manager(name, salary, teamSize);
+            company.addNewEmployee(employee);
+            System.out.println("Робітника Manager успішно додано.");
+        } catch (InvalidFieldValueException e) {
+            System.out.println("Помилка створення робітника: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Виводить інформацію про всіх створених робітників.
+     */
+    private static void printAllEmployees(Company company) {
         if (company.getEmployees().isEmpty()) {
             System.out.println("Список робітників порожній.");
             return;
         }
 
-        printAllEmployees(company);
+        System.out.println("\nКомпанія: " + company.getName());
+        System.out.println("Адреса: " + company.getAddress());
+        System.out.println("Інформація про всіх робітників:");
 
-        UUID uuid = readUuid(scanner, "Введіть UUID робітника, якого потрібно видалити: ");
-        ArrayList<Employee> found = company.searchByUuid(uuid);
-
-        if (found.isEmpty()) {
-            System.out.println("Робітника не знайдено.");
-            return;
-        }
-
-        boolean deleted = company.delete(found.get(0));
-
-        if (deleted) {
-            System.out.println("Робітника успішно видалено.");
-        } else {
-            System.out.println("Не вдалося видалити робітника.");
+        for (Employee employee : company.getEmployees()) {
+            System.out.println(employee);
         }
     }
 
@@ -106,27 +228,26 @@ public class Main {
         printAllEmployees(company);
 
         UUID uuid = readUuid(scanner, "Введіть UUID робітника, якого потрібно змінити: ");
-        ArrayList<Employee> found = company.searchByUuid(uuid);
 
-        if (found.isEmpty()) {
-            System.out.println("Робітника не знайдено.");
-            return;
-        }
+        try {
+            ArrayList<Employee> found = company.searchByUuid(uuid);
 
-        Employee existingEmployee = found.get(0);
-        Employee updatedEmployee = createUpdatedEmployee(scanner, existingEmployee);
+            if (found.isEmpty()) {
+                throw new EmployeeNotFoundException("Робітника не знайдено.");
+            }
 
-        if (updatedEmployee == null) {
-            System.out.println("Модифікацію скасовано.");
-            return;
-        }
+            Employee existingEmployee = found.get(0);
+            Employee updatedEmployee = createUpdatedEmployee(scanner, existingEmployee);
 
-        boolean updated = company.update(existingEmployee, updatedEmployee);
+            if (updatedEmployee == null) {
+                System.out.println("Модифікацію скасовано.");
+                return;
+            }
 
-        if (updated) {
+            company.update(existingEmployee, updatedEmployee);
             System.out.println("Робітника успішно оновлено.");
-        } else {
-            System.out.println("Не вдалося оновити робітника.");
+        } catch (InvalidFieldValueException | EmployeeNotFoundException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -184,44 +305,6 @@ public class Main {
         }
 
         return new Employee(newName, newSalary);
-    }
-
-    /**
-     * Модифікує робітника класу Manager.
-     */
-    private static Employee updateManager(Scanner scanner, Manager employee) {
-        System.out.println("\nОберіть атрибут для зміни:");
-        System.out.println("1. Ім'я");
-        System.out.println("2. Зарплата");
-        System.out.println("3. Кількість підлеглих");
-        System.out.println("0. Скасувати");
-
-        int choice = readMenuChoice(scanner);
-
-        if (choice == 0) {
-            return null;
-        }
-
-        String newName = employee.getName();
-        double newSalary = employee.getSalary();
-        int newTeamSize = employee.getTeamSize();
-
-        switch (choice) {
-            case 1:
-                newName = readNonEmptyString(scanner, "Введіть нове ім'я: ");
-                break;
-            case 2:
-                newSalary = readNonNegativeDouble(scanner, "Введіть нову зарплату: ");
-                break;
-            case 3:
-                newTeamSize = readPositiveInt(scanner, "Введіть нову кількість підлеглих: ");
-                break;
-            default:
-                System.out.println("Помилка: оберіть пункт від 0 до 3.");
-                return null;
-        }
-
-        return new Manager(newName, newSalary, newTeamSize);
     }
 
     /**
@@ -328,7 +411,7 @@ public class Main {
                 newSalary = readNonNegativeDouble(scanner, "Введіть нову зарплату: ");
                 break;
             case 3:
-                newWorkCountry = readNonEmptyString(scanner, "Введіть нову країну: ");
+                newWorkCountry = readNonEmptyString(scanner, "Введіть нову країну дистанційної роботи: ");
                 break;
             default:
                 System.out.println("Помилка: оберіть пункт від 0 до 3.");
@@ -339,51 +422,68 @@ public class Main {
     }
 
     /**
-     * Виводить підменю створення робітників.
+     * Модифікує робітника класу Manager.
      */
-    private static void createObjectMenu(Scanner scanner, Company company) {
-        boolean inCreateMenu = true;
+    private static Employee updateManager(Scanner scanner, Manager employee) {
+        System.out.println("\nОберіть атрибут для зміни:");
+        System.out.println("1. Ім'я");
+        System.out.println("2. Зарплата");
+        System.out.println("3. Кількість підлеглих");
+        System.out.println("0. Скасувати");
 
-        while (inCreateMenu) {
-            printCreateMenu();
-            int choice = readMenuChoice(scanner);
+        int choice = readMenuChoice(scanner);
 
-            switch (choice) {
-                case 1:
-                    createEmployee(scanner, company);
-                    break;
-                case 2:
-                    createContractEmployee(scanner, company);
-                    break;
-                case 3:
-                    createFullTimeEmployee(scanner, company);
-                    break;
-                case 4:
-                    createRemoteEmployee(scanner, company);
-                    break;
-                case 5:
-                    createManager(scanner, company);
-                    break;
-                case 0:
-                    inCreateMenu = false;
-                    break;
-                default:
-                    System.out.println("Помилка: оберіть пункт від 0 до 5.");
-            }
+        if (choice == 0) {
+            return null;
         }
+
+        String newName = employee.getName();
+        double newSalary = employee.getSalary();
+        int newTeamSize = employee.getTeamSize();
+
+        switch (choice) {
+            case 1:
+                newName = readNonEmptyString(scanner, "Введіть нове ім'я: ");
+                break;
+            case 2:
+                newSalary = readNonNegativeDouble(scanner, "Введіть нову зарплату: ");
+                break;
+            case 3:
+                newTeamSize = readPositiveInt(scanner, "Введіть нову кількість підлеглих: ");
+                break;
+            default:
+                System.out.println("Помилка: оберіть пункт від 0 до 3.");
+                return null;
+        }
+
+        return new Manager(newName, newSalary, newTeamSize);
     }
 
     /**
-     * Виводить меню вибору типу робітника.
+     * Виводить меню видалення робітника.
      */
-    private static void printCreateMenu() {
-        System.out.println("\nОберіть тип робітника для створення:");
-        System.out.println("1. Employee");
-        System.out.println("2. ContractEmployee");
-        System.out.println("3. FullTimeEmployee");
-        System.out.println("4. RemoteEmployee");
-        System.out.println("5. Manager");
-        System.out.println("0. Повернутися до головного меню");
+    private static void deleteEmployeeMenu(Scanner scanner, Company company) {
+        if (company.getEmployees().isEmpty()) {
+            System.out.println("Список робітників порожній.");
+            return;
+        }
+
+        printAllEmployees(company);
+
+        UUID uuid = readUuid(scanner, "Введіть UUID робітника, якого потрібно видалити: ");
+
+        try {
+            ArrayList<Employee> found = company.searchByUuid(uuid);
+
+            if (found.isEmpty()) {
+                throw new EmployeeNotFoundException("Робітника не знайдено.");
+            }
+
+            company.delete(found.get(0));
+            System.out.println("Робітника успішно видалено.");
+        } catch (InvalidFieldValueException | EmployeeNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     /**
@@ -398,6 +498,63 @@ public class Main {
     }
 
     /**
+     * Виводить підменю пошуку та виконує пошук робітника за вибраним критерієм.
+     */
+    private static void searchEmployeeMenu(Scanner scanner, Company company) {
+        boolean inSearchMenu = true;
+
+        while (inSearchMenu) {
+            printSearchMenu();
+            int choice = readMenuChoice(scanner);
+
+            try {
+                switch (choice) {
+                    case 1: {
+                        UUID uuid = readUuid(scanner, "Введіть UUID для пошуку робітника: ");
+                        ArrayList<Employee> results = company.searchByUuid(uuid);
+                        printSearchResults(results);
+                        break;
+                    }
+                    case 2: {
+                        String name = readNonEmptyString(scanner, "Введіть ім'я для пошуку робітника: ");
+                        ArrayList<Employee> results = company.searchByName(name);
+                        printSearchResults(results);
+                        break;
+                    }
+                    case 3: {
+                        String type = readNonEmptyString(scanner, "Введіть тип робітника для пошуку: ");
+                        ArrayList<Employee> results = company.searchByType(type);
+                        printSearchResults(results);
+                        break;
+                    }
+                    case 0:
+                        inSearchMenu = false;
+                        break;
+                    default:
+                        System.out.println("Помилка: оберіть пункт від 0 до 3.");
+                }
+            } catch (InvalidFieldValueException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Виводить результат пошуку робітника.
+     */
+    private static void printSearchResults(ArrayList<Employee> results) {
+        if (results.isEmpty()) {
+            System.out.println("Жодного робітника не знайдено.");
+            return;
+        }
+
+        System.out.println("\nРезультати пошуку:");
+        for (Employee employee : results) {
+            System.out.println(employee);
+        }
+    }
+
+    /**
      * Виводить підменю сортування робітників.
      */
     private static void printSortMenu() {
@@ -406,44 +563,6 @@ public class Main {
         System.out.println("2. Сортувати за зарплатою");
         System.out.println("3. Сортувати за UUID");
         System.out.println("0. Повернутися в головне меню");
-    }
-
-    /**
-     * Виводить підменю пошуку та виконує пошук робітника за вибраним критерієм.
-     */
-    private static void searchObjectMenu(Scanner scanner, Company company) {
-        boolean inSearchMenu = true;
-
-        while (inSearchMenu) {
-            printSearchMenu();
-            int choice = readMenuChoice(scanner);
-
-            switch (choice) {
-                case 1: {
-                    UUID uuid = readUuid(scanner, "Введіть UUID для пошуку робітника: ");
-                    ArrayList<Employee> results = company.searchByUuid(uuid);
-                    printSearchResults(results);
-                    break;
-                }
-                case 2: {
-                    String name = readNonEmptyString(scanner, "Введіть ім'я для пошуку робітника: ");
-                    ArrayList<Employee> results = company.searchByName(name);
-                    printSearchResults(results);
-                    break;
-                }
-                case 3: {
-                    String type = readNonEmptyString(scanner, "Введіть тип робітника для пошуку: ");
-                    ArrayList<Employee> results = company.searchByType(type);
-                    printSearchResults(results);
-                    break;
-                }
-                case 0:
-                    inSearchMenu = false;
-                    break;
-                default:
-                    System.out.println("Помилка: оберіть пункт від 0 до 3.");
-            }
-        }
     }
 
     /**
@@ -472,144 +591,6 @@ public class Main {
                 default:
                     System.out.println("Помилка: оберіть пункт від 0 до 3.");
             }
-        }
-    }
-
-    /**
-     * Зчитує номер пункту меню.
-     */
-    private static int readMenuChoice(Scanner scanner) {
-        while (true) {
-            System.out.print("Оберіть пункт меню: ");
-            String input = scanner.nextLine().trim();
-
-            if (input.isEmpty()) {
-                System.out.println("Помилка: рядок не може бути порожнім.");
-                continue;
-            }
-
-            try {
-                return Integer.parseInt(input);
-            } catch (NumberFormatException e) {
-                System.out.println("Помилка: введіть ціле число.");
-            }
-        }
-    }
-
-    /**
-     * Створює робітника базового класу Employee.
-     */
-    private static void createEmployee(Scanner scanner, Company company) {
-        try {
-            String name = readNonEmptyString(scanner, "Введіть ім'я: ");
-            double salary = readNonNegativeDouble(scanner, "Введіть зарплату: ");
-
-            Employee employee = new Employee(name, salary);
-            company.addNewEmployee(employee);
-            System.out.println("Робітника Employee успішно додано.");
-        } catch (IllegalArgumentException e) {
-            System.out.println("Помилка створення робітника: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Створює робітника класу ContractEmployee.
-     */
-    private static void createContractEmployee(Scanner scanner, Company company) {
-        try {
-            String name = readNonEmptyString(scanner, "Введіть ім'я: ");
-            double salary = readNonNegativeDouble(scanner, "Введіть зарплату: ");
-            int contractMonths = readPositiveInt(scanner, "Введіть тривалість контракту в місяцях: ");
-
-            Employee employee = new ContractEmployee(name, salary, contractMonths);
-            company.addNewEmployee(employee);
-            System.out.println("Робітника ContractEmployee успішно додано.");
-        } catch (IllegalArgumentException e) {
-            System.out.println("Помилка створення робітника: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Створює робітника класу FullTimeEmployee.
-     */
-    private static void createFullTimeEmployee(Scanner scanner, Company company) {
-        try {
-            String name = readNonEmptyString(scanner, "Введіть ім'я: ");
-            double salary = readNonNegativeDouble(scanner, "Введіть зарплату: ");
-            double bonus = readNonNegativeDouble(scanner, "Введіть бонус: ");
-
-            Employee employee = new FullTimeEmployee(name, salary, bonus);
-            company.addNewEmployee(employee);
-            System.out.println("Робітника FullTimeEmployee успішно додано.");
-        } catch (IllegalArgumentException e) {
-            System.out.println("Помилка створення робітника: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Створює робітника класу RemoteEmployee.
-     */
-    private static void createRemoteEmployee(Scanner scanner, Company company) {
-        try {
-            String name = readNonEmptyString(scanner, "Введіть ім'я: ");
-            double salary = readNonNegativeDouble(scanner, "Введіть зарплату: ");
-            String workCountry = readNonEmptyString(scanner, "Введіть країну дистанційної роботи: ");
-
-            Employee employee = new RemoteEmployee(name, salary, workCountry);
-            company.addNewEmployee(employee);
-            System.out.println("Робітника RemoteEmployee успішно додано.");
-        } catch (IllegalArgumentException e) {
-            System.out.println("Помилка створення робітника: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Створює робітника класу Manager.
-     */
-    private static void createManager(Scanner scanner, Company company) {
-        try {
-            String name = readNonEmptyString(scanner, "Введіть ім'я: ");
-            double salary = readNonNegativeDouble(scanner, "Введіть зарплату: ");
-            int teamSize = readPositiveInt(scanner, "Введіть кількість підлеглих: ");
-
-            Employee employee = new Manager(name, salary, teamSize);
-            company.addNewEmployee(employee);
-            System.out.println("Робітника Manager успішно додано.");
-        } catch (IllegalArgumentException e) {
-            System.out.println("Помилка створення робітника: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Виводить інформацію про всіх створених робітників.
-     */
-    private static void printAllEmployees(Company company) {
-        if (company.getEmployees().isEmpty()) {
-            System.out.println("Список робітників порожній.");
-            return;
-        }
-
-        System.out.println("\nКомпанія: " + company.getName());
-        System.out.println("Адреса: " + company.getAddress());
-        System.out.println("Інформація про всіх робітників:");
-
-        for (Employee employee : company.getEmployees()) {
-            System.out.println(employee);
-        }
-    }
-
-    /**
-     * Виводить результат пошуку робітника.
-     */
-    private static void printSearchResults(ArrayList<Employee> results) {
-        if (results.isEmpty()) {
-            System.out.println("Жодного робітника не знайдено.");
-            return;
-        }
-
-        System.out.println("\nРезультати пошуку:");
-        for (Employee employee : results) {
-            System.out.println(employee);
         }
     }
 
@@ -706,6 +687,27 @@ public class Main {
         System.out.println("\nВідсортована інформація за UUID:");
         for (Employee employee : sortedEmployees) {
             System.out.println(employee);
+        }
+    }
+
+    /**
+     * Зчитує номер пункту меню.
+     */
+    private static int readMenuChoice(Scanner scanner) {
+        while (true) {
+            System.out.print("Оберіть пункт меню: ");
+            String input = scanner.nextLine().trim();
+
+            if (input.isEmpty()) {
+                System.out.println("Помилка: рядок не може бути порожнім.");
+                continue;
+            }
+
+            try {
+                return Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Помилка: введіть ціле число.");
+            }
         }
     }
 
