@@ -57,59 +57,59 @@ public class Main {
      */
     private static void printMainMenu() {
         System.out.println("\nГоловне меню:");
-        System.out.println("1. Створити новий об’єкт");
-        System.out.println("2. Вивести інформацію про всі об’єкти");
-        System.out.println("3. Модифікувати об’єкт");
-        System.out.println("4. Видалити об’єкт");
-        System.out.println("5. Пошук об’єкта");
-        System.out.println("6. Вивести відсортовану інформацію про всі об'єкти");
+        System.out.println("1. Створити нового робітника");
+        System.out.println("2. Вивести інформацію про всіх робітників");
+        System.out.println("3. Модифікувати робітника");
+        System.out.println("4. Видалити робітника");
+        System.out.println("5. Пошук робітника");
+        System.out.println("6. Вивести відсортовану інформацію про всіх робітників");
         System.out.println("7. Завершити роботу програми");
     }
 
     /**
-     * Виводить меню видалення працівника.
+     * Виводить меню видалення робітника.
      */
     private static void deleteEmployeeMenu(Scanner scanner, Company company) {
         if (company.getEmployees().isEmpty()) {
-            System.out.println("Список об'єктів порожній.");
+            System.out.println("Список робітників порожній.");
             return;
         }
 
         printAllEmployees(company);
 
-        UUID uuid = readUuid(scanner, "Введіть UUID об'єкта, який потрібно видалити: ");
+        UUID uuid = readUuid(scanner, "Введіть UUID робітника, якого потрібно видалити: ");
         ArrayList<Employee> found = company.searchByUuid(uuid);
 
         if (found.isEmpty()) {
-            System.out.println("Об'єкт не знайдено.");
+            System.out.println("Робітника не знайдено.");
             return;
         }
 
         boolean deleted = company.delete(found.get(0));
 
         if (deleted) {
-            System.out.println("Об'єкт успішно видалено.");
+            System.out.println("Робітника успішно видалено.");
         } else {
-            System.out.println("Не вдалося видалити об'єкт.");
+            System.out.println("Не вдалося видалити робітника.");
         }
     }
 
     /**
-     * Виводить меню модифікації працівника.
+     * Виводить меню модифікації робітника.
      */
     private static void updateEmployeeMenu(Scanner scanner, Company company) {
         if (company.getEmployees().isEmpty()) {
-            System.out.println("Список об'єктів порожній.");
+            System.out.println("Список робітників порожній.");
             return;
         }
 
         printAllEmployees(company);
 
-        UUID uuid = readUuid(scanner, "Введіть UUID об'єкта, який потрібно змінити: ");
+        UUID uuid = readUuid(scanner, "Введіть UUID робітника, якого потрібно змінити: ");
         ArrayList<Employee> found = company.searchByUuid(uuid);
 
         if (found.isEmpty()) {
-            System.out.println("Об'єкт не знайдено.");
+            System.out.println("Робітника не знайдено.");
             return;
         }
 
@@ -124,14 +124,14 @@ public class Main {
         boolean updated = company.update(existingEmployee, updatedEmployee);
 
         if (updated) {
-            System.out.println("Об'єкт успішно оновлено.");
+            System.out.println("Робітника успішно оновлено.");
         } else {
-            System.out.println("Не вдалося оновити об'єкт.");
+            System.out.println("Не вдалося оновити робітника.");
         }
     }
 
     /**
-     * Створює новий об'єкт на основі існуючого з одним зміненим атрибутом.
+     * Створює нового робітника на основі існуючого з одним зміненим атрибутом.
      */
     private static Employee createUpdatedEmployee(Scanner scanner, Employee employee) {
         if (employee instanceof ContractEmployee) {
@@ -154,7 +154,7 @@ public class Main {
     }
 
     /**
-     * Модифікує об'єкт базового класу Employee.
+     * Модифікує робітника базового класу Employee.
      */
     private static Employee updateBaseEmployee(Scanner scanner, Employee employee) {
         System.out.println("\nОберіть атрибут для зміни:");
@@ -187,7 +187,7 @@ public class Main {
     }
 
     /**
-     * Модифікує об'єкт класу Manager.
+     * Модифікує робітника класу Manager.
      */
     private static Employee updateManager(Scanner scanner, Manager employee) {
         System.out.println("\nОберіть атрибут для зміни:");
@@ -225,7 +225,7 @@ public class Main {
     }
 
     /**
-     * Модифікує об'єкт класу ContractEmployee.
+     * Модифікує робітника класу ContractEmployee.
      */
     private static Employee updateContractEmployee(Scanner scanner, ContractEmployee employee) {
         System.out.println("\nОберіть атрибут для зміни:");
@@ -263,7 +263,7 @@ public class Main {
     }
 
     /**
-     * Модифікує об'єкт класу FullTimeEmployee.
+     * Модифікує робітника класу FullTimeEmployee.
      */
     private static Employee updateFullTimeEmployee(Scanner scanner, FullTimeEmployee employee) {
         System.out.println("\nОберіть атрибут для зміни:");
@@ -301,7 +301,7 @@ public class Main {
     }
 
     /**
-     * Модифікує об'єкт класу RemoteEmployee.
+     * Модифікує робітника класу RemoteEmployee.
      */
     private static Employee updateRemoteEmployee(Scanner scanner, RemoteEmployee employee) {
         System.out.println("\nОберіть атрибут для зміни:");
@@ -339,7 +339,7 @@ public class Main {
     }
 
     /**
-     * Виводить підменю створення об'єктів.
+     * Виводить підменю створення робітників.
      */
     private static void createObjectMenu(Scanner scanner, Company company) {
         boolean inCreateMenu = true;
@@ -374,10 +374,10 @@ public class Main {
     }
 
     /**
-     * Виводить меню вибору типу об'єкта.
+     * Виводить меню вибору типу робітника.
      */
     private static void printCreateMenu() {
-        System.out.println("\nОберіть тип об'єкта для створення:");
+        System.out.println("\nОберіть тип робітника для створення:");
         System.out.println("1. Employee");
         System.out.println("2. ContractEmployee");
         System.out.println("3. FullTimeEmployee");
@@ -387,18 +387,18 @@ public class Main {
     }
 
     /**
-     * Виводить підменю пошуку.
+     * Виводить підменю пошуку робітника.
      */
     private static void printSearchMenu() {
-        System.out.println("\nПошук об'єкта:");
+        System.out.println("\nПошук робітника:");
         System.out.println("1. Пошук за UUID");
         System.out.println("2. Пошук за ім'ям");
-        System.out.println("3. Пошук за типом об'єкта");
+        System.out.println("3. Пошук за типом робітника");
         System.out.println("0. Повернутися до головного меню");
     }
 
     /**
-     * Виводить підменю сортування.
+     * Виводить підменю сортування робітників.
      */
     private static void printSortMenu() {
         System.out.println("\nОберіть критерій сортування:");
@@ -409,7 +409,7 @@ public class Main {
     }
 
     /**
-     * Виводить підменю пошуку та виконує пошук за вибраним критерієм.
+     * Виводить підменю пошуку та виконує пошук робітника за вибраним критерієм.
      */
     private static void searchObjectMenu(Scanner scanner, Company company) {
         boolean inSearchMenu = true;
@@ -420,19 +420,19 @@ public class Main {
 
             switch (choice) {
                 case 1: {
-                    UUID uuid = readUuid(scanner, "Введіть UUID для пошуку: ");
+                    UUID uuid = readUuid(scanner, "Введіть UUID для пошуку робітника: ");
                     ArrayList<Employee> results = company.searchByUuid(uuid);
                     printSearchResults(results);
                     break;
                 }
                 case 2: {
-                    String name = readNonEmptyString(scanner, "Введіть ім'я для пошуку: ");
+                    String name = readNonEmptyString(scanner, "Введіть ім'я для пошуку робітника: ");
                     ArrayList<Employee> results = company.searchByName(name);
                     printSearchResults(results);
                     break;
                 }
                 case 3: {
-                    String type = readNonEmptyString(scanner, "Введіть тип об'єкта для пошуку: ");
+                    String type = readNonEmptyString(scanner, "Введіть тип робітника для пошуку: ");
                     ArrayList<Employee> results = company.searchByType(type);
                     printSearchResults(results);
                     break;
@@ -447,7 +447,7 @@ public class Main {
     }
 
     /**
-     * Виводить підменю сортування та виконує сортування за вибраним критерієм.
+     * Виводить підменю сортування та виконує сортування робітників за вибраним критерієм.
      */
     private static void sortEmployeesMenu(Scanner scanner, Company company) {
         boolean inSortMenu = true;
@@ -497,7 +497,7 @@ public class Main {
     }
 
     /**
-     * Створює об'єкт базового класу Employee.
+     * Створює робітника базового класу Employee.
      */
     private static void createEmployee(Scanner scanner, Company company) {
         try {
@@ -506,14 +506,14 @@ public class Main {
 
             Employee employee = new Employee(name, salary);
             company.addNewEmployee(employee);
-            System.out.println("Об'єкт Employee успішно додано.");
+            System.out.println("Робітника Employee успішно додано.");
         } catch (IllegalArgumentException e) {
-            System.out.println("Помилка створення об'єкта: " + e.getMessage());
+            System.out.println("Помилка створення робітника: " + e.getMessage());
         }
     }
 
     /**
-     * Створює об'єкт класу ContractEmployee.
+     * Створює робітника класу ContractEmployee.
      */
     private static void createContractEmployee(Scanner scanner, Company company) {
         try {
@@ -523,14 +523,14 @@ public class Main {
 
             Employee employee = new ContractEmployee(name, salary, contractMonths);
             company.addNewEmployee(employee);
-            System.out.println("Об'єкт ContractEmployee успішно додано.");
+            System.out.println("Робітника ContractEmployee успішно додано.");
         } catch (IllegalArgumentException e) {
-            System.out.println("Помилка створення об'єкта: " + e.getMessage());
+            System.out.println("Помилка створення робітника: " + e.getMessage());
         }
     }
 
     /**
-     * Створює об'єкт класу FullTimeEmployee.
+     * Створює робітника класу FullTimeEmployee.
      */
     private static void createFullTimeEmployee(Scanner scanner, Company company) {
         try {
@@ -540,14 +540,14 @@ public class Main {
 
             Employee employee = new FullTimeEmployee(name, salary, bonus);
             company.addNewEmployee(employee);
-            System.out.println("Об'єкт FullTimeEmployee успішно додано.");
+            System.out.println("Робітника FullTimeEmployee успішно додано.");
         } catch (IllegalArgumentException e) {
-            System.out.println("Помилка створення об'єкта: " + e.getMessage());
+            System.out.println("Помилка створення робітника: " + e.getMessage());
         }
     }
 
     /**
-     * Створює об'єкт класу RemoteEmployee.
+     * Створює робітника класу RemoteEmployee.
      */
     private static void createRemoteEmployee(Scanner scanner, Company company) {
         try {
@@ -557,14 +557,14 @@ public class Main {
 
             Employee employee = new RemoteEmployee(name, salary, workCountry);
             company.addNewEmployee(employee);
-            System.out.println("Об'єкт RemoteEmployee успішно додано.");
+            System.out.println("Робітника RemoteEmployee успішно додано.");
         } catch (IllegalArgumentException e) {
-            System.out.println("Помилка створення об'єкта: " + e.getMessage());
+            System.out.println("Помилка створення робітника: " + e.getMessage());
         }
     }
 
     /**
-     * Створює об'єкт класу Manager.
+     * Створює робітника класу Manager.
      */
     private static void createManager(Scanner scanner, Company company) {
         try {
@@ -574,24 +574,24 @@ public class Main {
 
             Employee employee = new Manager(name, salary, teamSize);
             company.addNewEmployee(employee);
-            System.out.println("Об'єкт Manager успішно додано.");
+            System.out.println("Робітника Manager успішно додано.");
         } catch (IllegalArgumentException e) {
-            System.out.println("Помилка створення об'єкта: " + e.getMessage());
+            System.out.println("Помилка створення робітника: " + e.getMessage());
         }
     }
 
     /**
-     * Виводить інформацію про всі створені об'єкти.
+     * Виводить інформацію про всіх створених робітників.
      */
     private static void printAllEmployees(Company company) {
         if (company.getEmployees().isEmpty()) {
-            System.out.println("Список об'єктів порожній.");
+            System.out.println("Список робітників порожній.");
             return;
         }
 
         System.out.println("\nКомпанія: " + company.getName());
         System.out.println("Адреса: " + company.getAddress());
-        System.out.println("Інформація про всі об'єкти:");
+        System.out.println("Інформація про всіх робітників:");
 
         for (Employee employee : company.getEmployees()) {
             System.out.println(employee);
@@ -599,11 +599,11 @@ public class Main {
     }
 
     /**
-     * Виводить результат пошуку.
+     * Виводить результат пошуку робітника.
      */
     private static void printSearchResults(ArrayList<Employee> results) {
         if (results.isEmpty()) {
-            System.out.println("Жоден об'єкт не відповідає умовам пошуку.");
+            System.out.println("Жодного робітника не знайдено.");
             return;
         }
 
@@ -614,11 +614,11 @@ public class Main {
     }
 
     /**
-     * Сортує список працівників за ім'ям та виводить результат.
+     * Сортує список робітників за ім'ям та виводить результат.
      */
     private static void sortByName(Company company) {
         if (company.getEmployees().isEmpty()) {
-            System.out.println("Список об'єктів порожній.");
+            System.out.println("Список робітників порожній.");
             return;
         }
 
@@ -646,11 +646,11 @@ public class Main {
     }
 
     /**
-     * Сортує список працівників за зарплатою та виводить результат.
+     * Сортує список робітників за зарплатою та виводить результат.
      */
     private static void sortBySalary(Company company) {
         if (company.getEmployees().isEmpty()) {
-            System.out.println("Список об'єктів порожній.");
+            System.out.println("Список робітників порожній.");
             return;
         }
 
@@ -684,11 +684,11 @@ public class Main {
     }
 
     /**
-     * Сортує список працівників за UUID та виводить результат.
+     * Сортує список робітників за UUID та виводить результат.
      */
     private static void sortByUuid(Company company) {
         if (company.getEmployees().isEmpty()) {
-            System.out.println("Список об'єктів порожній.");
+            System.out.println("Список робітників порожній.");
             return;
         }
 
