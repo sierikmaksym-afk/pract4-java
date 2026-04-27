@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Виняток для ситуацій, коли робітника не знайдено.
  */
 public class EmployeeNotFoundException extends RuntimeException {

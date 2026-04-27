@@ -1,31 +1,31 @@
-﻿import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Тести для класу Employee.
  */
-class EmployeeTest {
+class EmployeeTests {
 
     /**
-     * Перевіряє, що сетер кидає виняток при некоректному значенні.
+     * Перевіряє, що сетер кидає власний виняток при некоректному значенні зарплати.
      */
     @Test
-    void shouldThrowExceptionWhenInvalidValueInSetter() {
-        Employee obj = new Employee(1, "Employee", 1000.0);
+    void shouldThrowInvalidFieldValueExceptionWhenInvalidValueInSetter() {
+        Employee obj = new Employee("Employee", 1000.0);
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(InvalidFieldValueException.class, () -> {
             obj.setSalary(-1);
         });
     }
 
     /**
-     * Перевіряє, що конструктор кидає виняток при некоректних даних.
+     * Перевіряє, що конструктор кидає власний виняток при некоректних даних.
      */
     @Test
-    void shouldThrowExceptionWhenInvalidConstructorData() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Employee(0, "", -5);
+    void shouldThrowInvalidFieldValueExceptionWhenInvalidConstructorData() {
+        assertThrows(InvalidFieldValueException.class, () -> {
+            new Employee("", -5);
         });
     }
 }

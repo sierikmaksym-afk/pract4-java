@@ -1,4 +1,4 @@
-﻿import java.util.UUID;
+import java.util.UUID;
 
 /**
  * Інтерфейс, що задає контракт отримання UUID.
