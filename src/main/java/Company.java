@@ -2,7 +2,7 @@
 import java.util.UUID;
 
 /**
- * Клас, що описує компанію та зберігає колекцію працівників.
+ * Клас, що описує компанію та зберігає колекцію робітників.
  */
 public class Company {
     private String name;
@@ -30,7 +30,7 @@ public class Company {
      */
     public void setName(String name) {
         if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Назва компанії не може бути порожньою.");
+            throw new InvalidFieldValueException("Назва компанії не може бути порожньою.");
         }
         this.name = name.trim();
     }
@@ -47,29 +47,67 @@ public class Company {
      */
     public void setAddress(String address) {
         if (address == null || address.trim().isEmpty()) {
-            throw new IllegalArgumentException("Адреса компанії не може бути порожньою.");
+            throw new InvalidFieldValueException("Адреса компанії не може бути порожньою.");
         }
         this.address = address.trim();
     }
 
     /**
-     * Повертає колекцію працівників компанії.
+     * Повертає колекцію робітників компанії.
      */
     public ArrayList<Employee> getEmployees() {
         return employees;
     }
 
     /**
-     * Додає нового працівника у колекцію.
+     * Додає нового робітника у колекцію.
      */
     public void addNewEmployee(Employee emp) {
         if (emp == null) {
-            throw new IllegalArgumentException("Працівник не може бути null.");
+            throw new InvalidFieldValueException("Робітник не може бути null.");
         }
 
-        if (findEmployeeIndex(emp) == -1) {
-            employees.add(emp);
+        if (findEmployeeIndex(emp) != -1) {
+            throw new InvalidFieldValueException("Такий робітник уже існує в колекції.");
         }
+
+        employees.add(emp);
+    }
+
+    /**
+     * Оновлює дані існуючого робітника.
+     */
+    public boolean update(Employee existingObject, Employee newObject) {
+        if (existingObject == null || newObject == null) {
+            throw new InvalidFieldValueException("Робітник для оновлення не може бути null.");
+        }
+
+        int index = findEmployeeIndex(existingObject);
+
+        if (index == -1) {
+            throw new EmployeeNotFoundException("Робітника для оновлення не знайдено.");
+        }
+
+        employees.set(index, newObject);
+        return true;
+    }
+
+    /**
+     * Видаляє існуючого робітника з колекції.
+     */
+    public boolean delete(Employee existingObject) {
+        if (existingObject == null) {
+            throw new InvalidFieldValueException("Робітник для видалення не може бути null.");
+        }
+
+        int index = findEmployeeIndex(existingObject);
+
+        if (index == -1) {
+            throw new EmployeeNotFoundException("Робітника для видалення не знайдено.");
+        }
+
+        employees.remove(index);
+        return true;
     }
 
     /**
@@ -79,7 +117,7 @@ public class Company {
         ArrayList<Employee> results = new ArrayList<Employee>();
 
         if (uuid == null) {
-            return results;
+            throw new InvalidFieldValueException("UUID не може бути null.");
         }
 
         for (Employee employee : employees) {
@@ -96,6 +134,11 @@ public class Company {
      */
     public ArrayList<Employee> searchByName(String name) {
         ArrayList<Employee> results = new ArrayList<Employee>();
+
+        if (name == null || name.trim().isEmpty()) {
+            throw new InvalidFieldValueException("Ім'я для пошуку не може бути порожнім.");
+        }
+
         String searchValue = name.trim().toLowerCase();
 
         for (Employee employee : employees) {
@@ -108,47 +151,15 @@ public class Company {
     }
 
     /**
-     * Оновлює дані існуючого працівника.
-     */
-    public boolean update(Employee existingObject, Employee newObject) {
-        if (existingObject == null || newObject == null) {
-            return false;
-        }
-
-        int index = findEmployeeIndex(existingObject);
-
-        if (index == -1) {
-            return false;
-        }
-
-        employees.set(index, newObject);
-        return true;
-    }
-
-    /**
-     * Видаляє існуючого працівника з колекції.
-     */
-    public boolean delete(Employee existingObject) {
-        if (existingObject == null) {
-            return false;
-        }
-
-        int index = findEmployeeIndex(existingObject);
-
-        if (index == -1) {
-            return false;
-        }
-
-        employees.remove(index);
-        return true;
-    }
-
-
-    /**
      * Повертає всі об'єкти, тип яких відповідає заданому значенню.
      */
     public ArrayList<Employee> searchByType(String type) {
         ArrayList<Employee> results = new ArrayList<Employee>();
+
+        if (type == null || type.trim().isEmpty()) {
+            throw new InvalidFieldValueException("Тип для пошуку не може бути порожнім.");
+        }
+
         String searchValue = type.trim().toLowerCase();
 
         for (Employee employee : employees) {
@@ -162,7 +173,7 @@ public class Company {
     }
 
     /**
-     * Повертає індекс працівника в колекції або -1, якщо працівника не знайдено.
+     * Повертає індекс робітника в колекції або -1, якщо робітника не знайдено.
      */
     private int findEmployeeIndex(Employee employee) {
         for (int i = 0; i < employees.size(); i++) {

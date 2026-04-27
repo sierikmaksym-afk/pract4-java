@@ -24,7 +24,7 @@ public class Manager extends Employee {
      */
     public void setTeamSize(int teamSize) {
         if (teamSize <= 0) {
-            throw new IllegalArgumentException("Кількість підлеглих повинна бути більше 0.");
+            throw new InvalidFieldValueException("Кількість підлеглих повинна бути більшою за 0.");
         }
         this.teamSize = teamSize;
     }

@@ -1,11 +1,11 @@
 /**
- * Клас, що описує контрактного працівника.
+ * Клас, що описує контрактного робітника.
  */
 public class ContractEmployee extends Employee {
     private int contractMonths;
 
     /**
-     * Конструктор для створення контрактного працівника.
+     * Конструктор для створення контрактного робітника.
      */
     public ContractEmployee(String name, double salary, int contractMonths) {
         super(name, salary);
@@ -24,7 +24,7 @@ public class ContractEmployee extends Employee {
      */
     public void setContractMonths(int contractMonths) {
         if (contractMonths <= 0) {
-            throw new IllegalArgumentException("Тривалість контракту повинна бути більше 0.");
+            throw new InvalidFieldValueException("Тривалість контракту повинна бути більшою за 0.");
         }
         this.contractMonths = contractMonths;
     }

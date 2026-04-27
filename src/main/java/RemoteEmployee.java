@@ -1,11 +1,11 @@
 /**
- * Клас, що описує віддаленого працівника.
+ * Клас, що описує віддаленого робітника.
  */
 public class RemoteEmployee extends Employee {
     private String workCountry;
 
     /**
-     * Конструктор для створення віддаленого працівника.
+     * Конструктор для створення віддаленого робітника.
      */
     public RemoteEmployee(String name, double salary, String workCountry) {
         super(name, salary);
@@ -24,7 +24,7 @@ public class RemoteEmployee extends Employee {
      */
     public void setWorkCountry(String workCountry) {
         if (workCountry == null || workCountry.trim().isEmpty()) {
-            throw new IllegalArgumentException("Країна дистанційної роботи не може бути порожньою.");
+            throw new InvalidFieldValueException("Країна дистанційної роботи не може бути порожньою.");
         }
         this.workCountry = workCountry.trim();
     }

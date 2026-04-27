@@ -1,7 +1,7 @@
 import java.util.UUID;
 
 /**
- * Базовий клас, що описує працівника компанії.
+ * Базовий клас, що описує робітника компанії.
  */
 public class Employee implements Identifiable {
     private UUID uuid;
@@ -9,7 +9,7 @@ public class Employee implements Identifiable {
     private double salary;
 
     /**
-     * Конструктор для створення об'єкта працівника.
+     * Конструктор для створення об'єкта робітника.
      */
     public Employee(String name, double salary) {
         this.uuid = UUID.randomUUID();
@@ -18,7 +18,7 @@ public class Employee implements Identifiable {
     }
 
     /**
-     * Повертає UUID працівника.
+     * Повертає UUID робітника.
      */
     @Override
     public UUID getUuid() {
@@ -26,35 +26,35 @@ public class Employee implements Identifiable {
     }
 
     /**
-     * Повертає ім'я працівника.
+     * Повертає ім'я робітника.
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Встановлює ім'я працівника.
+     * Встановлює ім'я робітника.
      */
     public void setName(String name) {
         if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Ім'я не може бути порожнім.");
+            throw new InvalidFieldValueException("Ім'я робітника не може бути порожнім.");
         }
         this.name = name.trim();
     }
 
     /**
-     * Повертає зарплату працівника.
+     * Повертає зарплату робітника.
      */
     public double getSalary() {
         return salary;
     }
 
     /**
-     * Встановлює зарплату працівника.
+     * Встановлює зарплату робітника.
      */
     public void setSalary(double salary) {
         if (salary < 0) {
-            throw new IllegalArgumentException("Зарплата не може бути від'ємною.");
+            throw new InvalidFieldValueException("Зарплата робітника не може бути від'ємною.");
         }
         this.salary = salary;
     }
@@ -85,7 +85,14 @@ public class Employee implements Identifiable {
         }
 
         Employee employee = (Employee) obj;
-
         return uuid.equals(employee.uuid);
+    }
+
+    /**
+     * Повертає хеш-код об'єкта.
+     */
+    @Override
+    public int hashCode() {
+        return uuid.hashCode();
     }
 }

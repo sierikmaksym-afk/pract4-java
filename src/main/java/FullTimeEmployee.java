@@ -1,11 +1,11 @@
 /**
- * Клас, що описує штатного працівника.
+ * Клас, що описує штатного робітника.
  */
 public class FullTimeEmployee extends Employee {
     private double bonus;
 
     /**
-     * Конструктор для створення штатного працівника.
+     * Конструктор для створення штатного робітника.
      */
     public FullTimeEmployee(String name, double salary, double bonus) {
         super(name, salary);
@@ -13,18 +13,18 @@ public class FullTimeEmployee extends Employee {
     }
 
     /**
-     * Повертає бонус працівника.
+     * Повертає бонус робітника.
      */
     public double getBonus() {
         return bonus;
     }
 
     /**
-     * Встановлює бонус працівника.
+     * Встановлює бонус робітника.
      */
     public void setBonus(double bonus) {
         if (bonus < 0) {
-            throw new IllegalArgumentException("Бонус не може бути від'ємним.");
+            throw new InvalidFieldValueException("Бонус робітника не може бути від'ємним.");
         }
         this.bonus = bonus;
     }
