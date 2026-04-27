@@ -29,17 +29,20 @@ public class Main {
                     printAllEmployees(company);
                     break;
                 case 3:
-                    searchObjectMenu(scanner, company);
+                    updateEmployeeMenu(scanner, company);
                     break;
                 case 4:
-                    sortEmployeesMenu(scanner, company);
+                    searchObjectMenu(scanner, company);
                     break;
                 case 5:
+                    sortEmployeesMenu(scanner, company);
+                    break;
+                case 6:
                     System.out.println("Роботу програми завершено.");
                     running = false;
                     break;
                 default:
-                    System.out.println("Помилка: оберіть пункт від 1 до 5.");
+                    System.out.println("Помилка: оберіть пункт від 1 до 6.");
             }
         }
 
@@ -53,9 +56,254 @@ public class Main {
         System.out.println("\nГоловне меню:");
         System.out.println("1. Створити новий об’єкт");
         System.out.println("2. Вивести інформацію про всі об’єкти");
-        System.out.println("3. Пошук об’єкта");
-        System.out.println("4. Вивести відсортовану інформацію про всі об'єкти");
-        System.out.println("5. Завершити роботу програми");
+        System.out.println("3. Модифікувати об’єкт");
+        System.out.println("4. Пошук об’єкта");
+        System.out.println("5. Вивести відсортовану інформацію про всі об'єкти");
+        System.out.println("6. Завершити роботу програми");
+    }
+
+    /**
+     * Виводить меню модифікації працівника.
+     */
+    private static void updateEmployeeMenu(Scanner scanner, Company company) {
+        if (company.getEmployees().isEmpty()) {
+            System.out.println("Список об'єктів порожній.");
+            return;
+        }
+
+        printAllEmployees(company);
+
+        UUID uuid = readUuid(scanner, "Введіть UUID об'єкта, який потрібно змінити: ");
+        ArrayList<Employee> found = company.searchByUuid(uuid);
+
+        if (found.isEmpty()) {
+            System.out.println("Об'єкт не знайдено.");
+            return;
+        }
+
+        Employee existingEmployee = found.get(0);
+        Employee updatedEmployee = createUpdatedEmployee(scanner, existingEmployee);
+
+        if (updatedEmployee == null) {
+            System.out.println("Модифікацію скасовано.");
+            return;
+        }
+
+        boolean updated = company.update(existingEmployee, updatedEmployee);
+
+        if (updated) {
+            System.out.println("Об'єкт успішно оновлено.");
+        } else {
+            System.out.println("Не вдалося оновити об'єкт.");
+        }
+    }
+
+    /**
+     * Створює новий об'єкт на основі існуючого з одним зміненим атрибутом.
+     */
+    private static Employee createUpdatedEmployee(Scanner scanner, Employee employee) {
+        if (employee instanceof ContractEmployee) {
+            return updateContractEmployee(scanner, (ContractEmployee) employee);
+        }
+
+        if (employee instanceof FullTimeEmployee) {
+            return updateFullTimeEmployee(scanner, (FullTimeEmployee) employee);
+        }
+
+        if (employee instanceof RemoteEmployee) {
+            return updateRemoteEmployee(scanner, (RemoteEmployee) employee);
+        }
+
+        if (employee instanceof Manager) {
+            return updateManager(scanner, (Manager) employee);
+        }
+
+        return updateBaseEmployee(scanner, employee);
+    }
+
+    /**
+     * Модифікує об'єкт базового класу Employee.
+     */
+    private static Employee updateBaseEmployee(Scanner scanner, Employee employee) {
+        System.out.println("\nОберіть атрибут для зміни:");
+        System.out.println("1. Ім'я");
+        System.out.println("2. Зарплата");
+        System.out.println("0. Скасувати");
+
+        int choice = readMenuChoice(scanner);
+
+        if (choice == 0) {
+            return null;
+        }
+
+        String newName = employee.getName();
+        double newSalary = employee.getSalary();
+
+        switch (choice) {
+            case 1:
+                newName = readNonEmptyString(scanner, "Введіть нове ім'я: ");
+                break;
+            case 2:
+                newSalary = readNonNegativeDouble(scanner, "Введіть нову зарплату: ");
+                break;
+            default:
+                System.out.println("Помилка: оберіть пункт від 0 до 2.");
+                return null;
+        }
+
+        return new Employee(newName, newSalary);
+    }
+
+    /**
+     * Модифікує об'єкт класу Manager.
+     */
+    private static Employee updateManager(Scanner scanner, Manager employee) {
+        System.out.println("\nОберіть атрибут для зміни:");
+        System.out.println("1. Ім'я");
+        System.out.println("2. Зарплата");
+        System.out.println("3. Кількість підлеглих");
+        System.out.println("0. Скасувати");
+
+        int choice = readMenuChoice(scanner);
+
+        if (choice == 0) {
+            return null;
+        }
+
+        String newName = employee.getName();
+        double newSalary = employee.getSalary();
+        int newTeamSize = employee.getTeamSize();
+
+        switch (choice) {
+            case 1:
+                newName = readNonEmptyString(scanner, "Введіть нове ім'я: ");
+                break;
+            case 2:
+                newSalary = readNonNegativeDouble(scanner, "Введіть нову зарплату: ");
+                break;
+            case 3:
+                newTeamSize = readPositiveInt(scanner, "Введіть нову кількість підлеглих: ");
+                break;
+            default:
+                System.out.println("Помилка: оберіть пункт від 0 до 3.");
+                return null;
+        }
+
+        return new Manager(newName, newSalary, newTeamSize);
+    }
+
+    /**
+     * Модифікує об'єкт класу ContractEmployee.
+     */
+    private static Employee updateContractEmployee(Scanner scanner, ContractEmployee employee) {
+        System.out.println("\nОберіть атрибут для зміни:");
+        System.out.println("1. Ім'я");
+        System.out.println("2. Зарплата");
+        System.out.println("3. Тривалість контракту");
+        System.out.println("0. Скасувати");
+
+        int choice = readMenuChoice(scanner);
+
+        if (choice == 0) {
+            return null;
+        }
+
+        String newName = employee.getName();
+        double newSalary = employee.getSalary();
+        int newContractMonths = employee.getContractMonths();
+
+        switch (choice) {
+            case 1:
+                newName = readNonEmptyString(scanner, "Введіть нове ім'я: ");
+                break;
+            case 2:
+                newSalary = readNonNegativeDouble(scanner, "Введіть нову зарплату: ");
+                break;
+            case 3:
+                newContractMonths = readPositiveInt(scanner, "Введіть нову тривалість контракту: ");
+                break;
+            default:
+                System.out.println("Помилка: оберіть пункт від 0 до 3.");
+                return null;
+        }
+
+        return new ContractEmployee(newName, newSalary, newContractMonths);
+    }
+
+    /**
+     * Модифікує об'єкт класу FullTimeEmployee.
+     */
+    private static Employee updateFullTimeEmployee(Scanner scanner, FullTimeEmployee employee) {
+        System.out.println("\nОберіть атрибут для зміни:");
+        System.out.println("1. Ім'я");
+        System.out.println("2. Зарплата");
+        System.out.println("3. Бонус");
+        System.out.println("0. Скасувати");
+
+        int choice = readMenuChoice(scanner);
+
+        if (choice == 0) {
+            return null;
+        }
+
+        String newName = employee.getName();
+        double newSalary = employee.getSalary();
+        double newBonus = employee.getBonus();
+
+        switch (choice) {
+            case 1:
+                newName = readNonEmptyString(scanner, "Введіть нове ім'я: ");
+                break;
+            case 2:
+                newSalary = readNonNegativeDouble(scanner, "Введіть нову зарплату: ");
+                break;
+            case 3:
+                newBonus = readNonNegativeDouble(scanner, "Введіть новий бонус: ");
+                break;
+            default:
+                System.out.println("Помилка: оберіть пункт від 0 до 3.");
+                return null;
+        }
+
+        return new FullTimeEmployee(newName, newSalary, newBonus);
+    }
+
+    /**
+     * Модифікує об'єкт класу RemoteEmployee.
+     */
+    private static Employee updateRemoteEmployee(Scanner scanner, RemoteEmployee employee) {
+        System.out.println("\nОберіть атрибут для зміни:");
+        System.out.println("1. Ім'я");
+        System.out.println("2. Зарплата");
+        System.out.println("3. Країна дистанційної роботи");
+        System.out.println("0. Скасувати");
+
+        int choice = readMenuChoice(scanner);
+
+        if (choice == 0) {
+            return null;
+        }
+
+        String newName = employee.getName();
+        double newSalary = employee.getSalary();
+        String newWorkCountry = employee.getWorkCountry();
+
+        switch (choice) {
+            case 1:
+                newName = readNonEmptyString(scanner, "Введіть нове ім'я: ");
+                break;
+            case 2:
+                newSalary = readNonNegativeDouble(scanner, "Введіть нову зарплату: ");
+                break;
+            case 3:
+                newWorkCountry = readNonEmptyString(scanner, "Введіть нову країну: ");
+                break;
+            default:
+                System.out.println("Помилка: оберіть пункт від 0 до 3.");
+                return null;
+        }
+
+        return new RemoteEmployee(newName, newSalary, newWorkCountry);
     }
 
     /**

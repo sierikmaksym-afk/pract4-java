@@ -108,6 +108,25 @@ public class Company {
     }
 
     /**
+     * Оновлює дані існуючого працівника.
+     */
+    public boolean update(Employee existingObject, Employee newObject) {
+        if (existingObject == null || newObject == null) {
+            return false;
+        }
+
+        int index = findEmployeeIndex(existingObject);
+
+        if (index == -1) {
+            return false;
+        }
+
+        employees.set(index, newObject);
+        return true;
+    }
+
+
+    /**
      * Повертає всі об'єкти, тип яких відповідає заданому значенню.
      */
     public ArrayList<Employee> searchByType(String type) {
