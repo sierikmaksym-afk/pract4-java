@@ -7,8 +7,8 @@ public class RemoteEmployee extends Employee {
     /**
      * Конструктор для створення віддаленого працівника.
      */
-    public RemoteEmployee(int id, String name, double salary, String workCountry) {
-        super(id, name, salary);
+    public RemoteEmployee(String name, double salary, String workCountry) {
+        super(name, salary);
         setWorkCountry(workCountry);
     }
 
@@ -30,20 +30,12 @@ public class RemoteEmployee extends Employee {
     }
 
     /**
-     * Повертає рядок для запису об'єкта у файл.
-     */
-    @Override
-    public String toFileString() {
-        return "RemoteEmployee;" + getId() + ";" + getName() + ";" + getSalary() + ";" + workCountry;
-    }
-
-    /**
      * Повертає рядкове представлення об'єкта.
      */
     @Override
     public String toString() {
         return "RemoteEmployee{" +
-                "id=" + getId() +
+                "uuid=" + getUuid() +
                 ", name='" + getName() + '\'' +
                 ", salary=" + getSalary() +
                 ", workCountry='" + workCountry + '\'' +

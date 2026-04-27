@@ -7,8 +7,8 @@ public class ContractEmployee extends Employee {
     /**
      * Конструктор для створення контрактного працівника.
      */
-    public ContractEmployee(int id, String name, double salary, int contractMonths) {
-        super(id, name, salary);
+    public ContractEmployee(String name, double salary, int contractMonths) {
+        super(name, salary);
         setContractMonths(contractMonths);
     }
 
@@ -30,20 +30,12 @@ public class ContractEmployee extends Employee {
     }
 
     /**
-     * Повертає рядок для запису об'єкта у файл.
-     */
-    @Override
-    public String toFileString() {
-        return "ContractEmployee;" + getId() + ";" + getName() + ";" + getSalary() + ";" + contractMonths;
-    }
-
-    /**
      * Повертає рядкове представлення об'єкта.
      */
     @Override
     public String toString() {
         return "ContractEmployee{" +
-                "id=" + getId() +
+                "uuid=" + getUuid() +
                 ", name='" + getName() + '\'' +
                 ", salary=" + getSalary() +
                 ", contractMonths=" + contractMonths +

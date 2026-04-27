@@ -7,8 +7,8 @@ public class Manager extends Employee {
     /**
      * Конструктор для створення менеджера.
      */
-    public Manager(int id, String name, double salary, int teamSize) {
-        super(id, name, salary);
+    public Manager(String name, double salary, int teamSize) {
+        super(name, salary);
         setTeamSize(teamSize);
     }
 
@@ -30,20 +30,12 @@ public class Manager extends Employee {
     }
 
     /**
-     * Повертає рядок для запису об'єкта у файл.
-     */
-    @Override
-    public String toFileString() {
-        return "Manager;" + getId() + ";" + getName() + ";" + getSalary() + ";" + teamSize;
-    }
-
-    /**
      * Повертає рядкове представлення об'єкта.
      */
     @Override
     public String toString() {
         return "Manager{" +
-                "id=" + getId() +
+                "uuid=" + getUuid() +
                 ", name='" + getName() + '\'' +
                 ", salary=" + getSalary() +
                 ", teamSize=" + teamSize +

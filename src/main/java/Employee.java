@@ -1,48 +1,28 @@
+import java.util.UUID;
+
 /**
  * Базовий клас, що описує працівника компанії.
  */
-public class Employee {
-    private int id;
+public class Employee implements Identifiable {
+    private UUID uuid;
     private String name;
     private double salary;
 
     /**
      * Конструктор для створення об'єкта працівника.
      */
-    public Employee(int id, String name, double salary) {
-        setId(id);
+    public Employee(String name, double salary) {
+        this.uuid = UUID.randomUUID();
         setName(name);
         setSalary(salary);
     }
 
     /**
-     * Конструктор копіювання.
+     * Повертає UUID працівника.
      */
-    public Employee(Employee other) {
-        if (other == null) {
-            throw new IllegalArgumentException("Об'єкт для копіювання не може бути null.");
-        }
-
-        this.id = other.id;
-        this.name = other.name;
-        this.salary = other.salary;
-    }
-
-    /**
-     * Повертає ідентифікатор працівника.
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * Встановлює ідентифікатор працівника.
-     */
-    public void setId(int id) {
-        if (id <= 0) {
-            throw new IllegalArgumentException("ID повинен бути більше 0.");
-        }
-        this.id = id;
+    @Override
+    public UUID getUuid() {
+        return uuid;
     }
 
     /**
@@ -80,19 +60,12 @@ public class Employee {
     }
 
     /**
-     * Повертає рядок для запису об'єкта у файл.
-     */
-    public String toFileString() {
-        return "Employee;" + id + ";" + name + ";" + salary;
-    }
-
-    /**
      * Повертає рядкове представлення об'єкта.
      */
     @Override
     public String toString() {
         return "Employee{" +
-                "id=" + id +
+                "uuid=" + uuid +
                 ", name='" + name + '\'' +
                 ", salary=" + salary +
                 '}';
@@ -113,8 +86,6 @@ public class Employee {
 
         Employee employee = (Employee) obj;
 
-        return id == employee.id &&
-                Double.compare(salary, employee.salary) == 0 &&
-                name.equals(employee.name);
+        return uuid.equals(employee.uuid);
     }
 }

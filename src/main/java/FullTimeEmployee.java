@@ -7,8 +7,8 @@ public class FullTimeEmployee extends Employee {
     /**
      * Конструктор для створення штатного працівника.
      */
-    public FullTimeEmployee(int id, String name, double salary, double bonus) {
-        super(id, name, salary);
+    public FullTimeEmployee(String name, double salary, double bonus) {
+        super(name, salary);
         setBonus(bonus);
     }
 
@@ -30,20 +30,12 @@ public class FullTimeEmployee extends Employee {
     }
 
     /**
-     * Повертає рядок для запису об'єкта у файл.
-     */
-    @Override
-    public String toFileString() {
-        return "FullTimeEmployee;" + getId() + ";" + getName() + ";" + getSalary() + ";" + bonus;
-    }
-
-    /**
      * Повертає рядкове представлення об'єкта.
      */
     @Override
     public String toString() {
         return "FullTimeEmployee{" +
-                "id=" + getId() +
+                "uuid=" + getUuid() +
                 ", name='" + getName() + '\'' +
                 ", salary=" + getSalary() +
                 ", bonus=" + bonus +

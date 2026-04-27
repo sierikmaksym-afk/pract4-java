@@ -1,4 +1,5 @@
 ﻿import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Клас, що описує компанію та зберігає колекцію працівників.
@@ -7,7 +8,6 @@ public class Company {
     private String name;
     private String address;
     private ArrayList<Employee> employees;
-    private ArrayList<Integer> quantities;
 
     /**
      * Конструктор для створення об'єкта компанії.
@@ -16,7 +16,6 @@ public class Company {
         setName(name);
         setAddress(address);
         this.employees = new ArrayList<Employee>();
-        this.quantities = new ArrayList<Integer>();
     }
 
     /**
@@ -61,43 +60,30 @@ public class Company {
     }
 
     /**
-     * Повертає колекцію кількостей для працівників.
+     * Додає нового працівника у колекцію.
      */
-    public ArrayList<Integer> getQuantities() {
-        return quantities;
-    }
-
-    /**
-     * Додає нового працівника у колекцію або збільшує кількість, якщо він уже існує.
-     */
-    public void addNewEmployee(Employee emp, int quantity) {
+    public void addNewEmployee(Employee emp) {
         if (emp == null) {
             throw new IllegalArgumentException("Працівник не може бути null.");
         }
 
-        if (quantity <= 0) {
-            throw new IllegalArgumentException("Кількість повинна бути більше 0.");
-        }
-
-        int index = findEmployeeIndex(emp);
-
-        if (index >= 0) {
-            int currentQuantity = quantities.get(index);
-            quantities.set(index, currentQuantity + quantity);
-        } else {
+        if (findEmployeeIndex(emp) == -1) {
             employees.add(emp);
-            quantities.add(quantity);
         }
     }
 
     /**
-     * Повертає всі об'єкти, що відповідають вказаному id.
+     * Повертає всі об'єкти, що відповідають вказаному UUID.
      */
-    public ArrayList<Employee> searchById(int id) {
+    public ArrayList<Employee> searchByUuid(UUID uuid) {
         ArrayList<Employee> results = new ArrayList<Employee>();
 
+        if (uuid == null) {
+            return results;
+        }
+
         for (Employee employee : employees) {
-            if (employee.getId() == id) {
+            if (employee.getUuid().equals(uuid)) {
                 results.add(employee);
             }
         }
@@ -136,13 +122,6 @@ public class Company {
         }
 
         return results;
-    }
-
-    /**
-     * Повертає кількість для працівника за його індексом у колекції.
-     */
-    public int getQuantityByIndex(int index) {
-        return quantities.get(index);
     }
 
     /**
